@@ -170,7 +170,6 @@ public class Game {
 
 
     public boolean isNormalCard(String option) {
-        if(TryParse(option)) 
         return this.getPlayerByTurn().getHand().listCard().get(Integer.parseInt(option)-1) instanceof NormalCard;
     }
 
