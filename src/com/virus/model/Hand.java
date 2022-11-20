@@ -20,18 +20,13 @@ public class Hand {
         this.card3 = card3;
     }
 
-    public Card getCard() {
-        return card;
+    public void discardHand() {
+        this.card = null;
+        this.card2 = null;
+        this.card3 = null;
     }
 
-    public Card getCard2() {
-        return card2;
-    }
-
-    public Card getCard3() {
-        return card3;
-    }
-
+    // TODO separar funcion descartar en Game
     public boolean operateHand(Card card, boolean discard) {
         if(card.equals(this.card)) {
             if(discard) {
@@ -39,15 +34,13 @@ public class Hand {
             }
             this.card = null;
             return true;
-        }
-        if(card.equals(this.card2)) {
+        }else if(card.equals(this.card2)) {
             if(discard) {
                 discardCard(this.card2);
             }
             this.card2 = null;
             return true;
-        }
-        if(card.equals(card3)) {
+        }else if(card.equals(card3)) {
             if(discard) {
                 discardCard(this.card3);
             }
@@ -57,46 +50,9 @@ public class Hand {
         return false;
     }
 
-    public void discardCard(Card card) {
+    private void discardCard(Card card) {
         DiscardPile.getInstance().addCard(card);
     }
-
-    /*
-    public boolean operateHand(Card card) {
-        if(card.equals(this.card)) {
-            this.card = null;
-            return true;
-        }
-        if(card.equals(this.card2)) {
-            this.card2 = null;
-            return true;
-        }
-        if(card.equals(card3)) {
-            this.card3 = null;
-            return true;
-        }
-        return false;
-    }
-
-
-
-    public boolean discardCard(Card card) {
-        if(card.equals(this.card)) {
-            DiscardPile.getInstance().addCard(this.card);
-            return true;
-        }
-        if(card.equals(this.card2)) {
-            DiscardPile.getInstance().addCard(this.card2);
-            return true;
-        }
-        if(card.equals(card3)) {
-            DiscardPile.getInstance().addCard(this.card3);
-            return true;
-        }
-        return false;
-    }
-
-     */
 
     public void reFillHand() {
         if(this.card == null) {
@@ -113,7 +69,6 @@ public class Hand {
     public boolean isHandEmpty() {
         return this.card == null && this.card2 == null && this.card3 == null;
     }
-
 
     public List<Card> listCard() {
         List<Card> cards = new ArrayList<>();

@@ -53,6 +53,7 @@ public class Deck {
 
     }
 
+
     // Mezcla el mazo
     public void mixTheCards() {  //Collections.shuffle(mazoDeCartas);
         Stack<Card> aux = new Stack<>();
@@ -68,6 +69,8 @@ public class Deck {
             stack.add(aux.pop());
         }
     }
+
+
 
     public void reFillDeck() {
         if(this.stack.empty()) {

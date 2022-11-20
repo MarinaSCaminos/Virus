@@ -67,8 +67,14 @@ public class Console { //TODO singleton console
     private void start() {
         do {
             System.out.println("Le toca al jugador " + game.getPlayerNameByTurn() + "\n");
-            System.out.println(game.otherPlayersBody("Cuerpo de jugador %s"));
 
+            if(game.actualHandPlayerIsEmpty()) {
+                System.out.println("Tu mano esta vacia, se rellenara y continuara el siguient jugador");
+                this.preparedNextTurn();
+                continue;
+            }
+
+            System.out.println(game.otherPlayersBody("Cuerpo de jugador %s"));
             System.out.println("Tu cuerpo: ");
             System.out.println(game.mapPlayerInTurn());
             System.out.println("Tu mano: ");
@@ -82,7 +88,7 @@ public class Console { //TODO singleton console
                 String option2;
                 String option3;
 
-                System.out.println("1. Jugar una carta. \n 2.Descartar una carta. \n 3.Terminar turno");
+                System.out.println("1. Jugar una carta. \n2. Descartar una carta. \n3. Terminar turno");
                 option = scanner.nextLine();
 
                 // TODO hacer un while por cada ingreso de dato
@@ -147,9 +153,14 @@ public class Console { //TODO singleton console
                                     System.out.println(game.mapOptions(". Intercambiar la pila de %s"));
                                     option4 = scanner.nextLine();
 
-                                    // Si la carta mia no esta salvada y no la tiene el jugador contrario
-                                    // Si la carta que voy a intercambiar es la misma que la del jugador contrario
-                                    // Si la carta del jugador contrario no la tengo yo
+                                    //option2: stackToSwap , option3: selectedPlayer , option4: playerStackToSwap
+                                    if(game.playTransplant(option, option2, option3, option4)) {
+                                        playedOnce = true;
+                                        executedAnOption = true;
+                                    }else{
+                                        System.out.println("No se pudo intercambiar los organos.");
+                                        // Dar un menu para que intente con otrova a inicio
+                                    }
 
 
                                 }else if(game.isOrganThief(option)) {
@@ -163,21 +174,33 @@ public class Console { //TODO singleton console
                                     System.out.println(game.mapOptions(". Usar en la pila de %s"));
                                     option3 = scanner.nextLine();
 
-                                    // SI la carta que voy a robar no es del mismo tipo que tenga
+                                    // option2: jugador seleccionado , option3: cuerpo a robar
+                                    if(game.playOrganThief(option, option2, option3)) {
+                                        playedOnce = true;
+                                        executedAnOption = true;
+                                    }else{
+                                        System.out.println("No se pudo robar el organo.");
+                                        // Dar un menu para que intente con otrova a inicio
+                                    }
 
 
                                 }else if(game.isContagion(option)) {
 
 
                                 }else if(game.isLatexGloves(option)) {
-                                    // Descartar manos de los demas jugadores, rellenarlas
-                                    // Descrata y Agarra carta nueva? O sigue jugando con una carta menos
+                                    game.playLatexGloves(option);
+                                    playedOnce = true;
+                                    executedAnOption = true;
 
                                 }else if(game.isMedicalError(option)) {
                                     // Intercambia cuerpo
                                     System.out.println("Elija a cual jugador intercambiarle el cuerpo: ");
                                     System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                     option2 = scanner.nextLine();
+
+                                    game.playMedicalError(option, option2);
+                                    playedOnce = true;
+                                    executedAnOption = true;
 
                                 }
                             }
@@ -193,7 +216,7 @@ public class Console { //TODO singleton console
                     System.out.println("Elija cual carta descartar:");
                     System.out.println(game.mapCard());
                     option = scanner.nextLine();
-                    if (Integer.parseInt(option)-1 < 4) { // Menos que la cantidad de cartas de Mano
+                    if (Integer.parseInt(option) <= game.getNumberOfCards()) { // Menos que la cantidad de cartas de Mano
                         game.discardHandCard(option);
                         executedAnOption = true;
                         System.out.println(game.mapCard());
@@ -202,27 +225,16 @@ public class Console { //TODO singleton console
                     }
 
                 }else if(option.equals("3")) {    // FINALIZAR TURNO
-                    // Agarrar cartas hasta llenar hand?
                     if(executedAnOption) {
+                        // llene mano jugador
                         break;
                     }else{
                         System.out.println("Debes jugar o descartar al menos una carta.");
                     }
                 }
-            } while (game.actualHandPlayerIsEmpty());
+            } while (!game.actualHandPlayerIsEmpty());
 
-            game.actualHandPlayerReFill();
-
-            System.out.print("Presione Enter para continuar con el siguiente jugador.");
-            Scanner scanner = new Scanner(System.in);
-            String option = scanner.nextLine();
-            while (!option.equals("")) { // En vez de "\n" es una string vacia
-                System.out.print("Presione Enter para continuar con el siguiente jugador.");
-                option = scanner.nextLine();
-            }
-
-            game.nextTurn();
-
+            this.preparedNextTurn();
 
         } while(!game.existWinner());
 
@@ -257,6 +269,20 @@ public class Console { //TODO singleton console
             System.out.print("Por favor, ingrese un nombre valido para eliminar: ");
         } while(true);
         return game.deletePlayer(name);
+    }
+
+    public void preparedNextTurn() {
+        game.actualHandPlayerReFill();
+
+        System.out.print("Presione Enter para continuar con el siguiente jugador.");
+        Scanner scanner = new Scanner(System.in);
+        String option = scanner.nextLine();
+        while (!option.equals("")) { // En vez de "\n" es una string vacia
+            System.out.print("Presione Enter para continuar con el siguiente jugador.");
+            option = scanner.nextLine();
+        }
+
+        game.nextTurn();
     }
 
 }

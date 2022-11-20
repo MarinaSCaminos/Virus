@@ -48,4 +48,10 @@ public class Player { // TODO agregar el modificador de nombre en jugadores
     public Body getBody() {
         return body;
     }
+
+    public void playMedicalErrorCard(Player player) {
+        Body thisBody = this.getBody();
+        this.setBody(player.getBody());
+        player.setBody(thisBody);
+    }
 }

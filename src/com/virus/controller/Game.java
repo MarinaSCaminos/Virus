@@ -148,7 +148,6 @@ public class Game {
         return bodyPlayers;
     }
 
-
     public String mapCard() {
         List<String> list = this.getPlayerByTurn().getHand().getState();
         String result = "";
@@ -156,6 +155,10 @@ public class Game {
             result += card + "\n";
         }
         return result;
+    }
+
+    public int getNumberOfCards() {
+        return this.getPlayerByTurn().getHand().getState().size();
     }
 
     // Recibe una lista de Typos haciendo referencia a cual pila del cuerpo se puede jugar la carta seleccionada
@@ -167,7 +170,6 @@ public class Game {
         }
         return result;
     }
-
 
     public boolean isNormalCard(String option) {
         return this.getPlayerByTurn().getHand().listCard().get(Integer.parseInt(option)-1) instanceof NormalCard;
@@ -222,12 +224,12 @@ public class Game {
     public boolean addOrganToBody(String option) {
         Player player = this.getPlayerByTurn();
         Organ organ = (Organ) player.getHand().listCard().get(Integer.parseInt(option)-1);
-        return (player.getBody().addOrgan(organ)) && (player.getHand().operateHand(organ, false));
+        return (player.getBody().addOrgan(organ)) && (player.getHand().operateHand(organ, false)); //
     }
 
-    public boolean addMedicineToBody(String cardPosition, String typeOfOgan) {
+    public boolean addMedicineToBody(String cardPosition, String typeOfOrgan) {
         List<TypeOfOrgan> list = TypeOfOrgan.getListType();
-        TypeOfOrgan type = list.get(Integer.parseInt(typeOfOgan)-1);
+        TypeOfOrgan type = list.get(Integer.parseInt(typeOfOrgan)-1);
         Player player = this.getPlayerByTurn();
         Medicine medicine = (Medicine) player.getHand().listCard().get(Integer.parseInt(cardPosition)-1);
         return (player.getBody().addCard(medicine, type)) && (player.getHand().operateHand(medicine, false));
@@ -247,6 +249,45 @@ public class Game {
         this.getPlayerByTurn().getHand().operateHand(card, true);
     }
 
+    public boolean playTransplant(String cardPosition, String organToSwap, String selectedPlayer, String playerOrganToSwap) {
+        List<TypeOfOrgan> list = TypeOfOrgan.getListType();
+        TypeOfOrgan type = list.get(Integer.parseInt(organToSwap)-1);
+        TypeOfOrgan otherPlayerType = list.get(Integer.parseInt(playerOrganToSwap)-1);
+        Player playerToSwap = this.getPlayers().get(this.getPlayerByName(selectedPlayer));
+
+        if(this.getPlayerByTurn().getBody().playTransplantCard(type, playerToSwap, otherPlayerType)) {
+            this.discardHandCard(cardPosition);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean playOrganThief(String cardPosition, String selectedPlayer, String playerOrganToSteal) {
+        List<TypeOfOrgan> list = TypeOfOrgan.getListType();
+        TypeOfOrgan otherPlayerType = list.get(Integer.parseInt(playerOrganToSteal)-1);
+        Player playerToSteal = this.getPlayers().get(this.getPlayerByName(selectedPlayer));
+
+        if(this.getPlayerByTurn().getBody().playOrganThiefCard(playerToSteal, otherPlayerType)) {
+            this.discardHandCard(cardPosition);
+            return true;
+        }
+        return false;
+    }
+
+    public void playLatexGloves(String cardPosition) {
+        for(Player player : players) {
+            if(!player.equals(this.getPlayerByTurn())) {
+                player.getHand().discardHand();
+            }
+        }
+        this.discardHandCard(cardPosition);
+    }
+
+    public void playMedicalError(String cardPosition, String playerToSwapBody) {
+        this.getPlayerByTurn().playMedicalErrorCard(this.players.get(this.getPlayerByName(playerToSwapBody)));
+        this.discardHandCard(cardPosition);
+    }
+
     public int getPlayerByName(String name) {
         int result = 0;
         int i = 0;
@@ -258,4 +299,7 @@ public class Game {
         }
         return result;
     }
+
+
+
 }
