@@ -86,15 +86,30 @@ public class Game {
         return this.players.get(turn);
     }
 
+    private List<Player> getOtherPlayersByTurn() {
+        List<Player> list = new ArrayList<>();
+        for(Player player : this.players) {
+            if(!player.equals(this.getPlayerByTurn())) {
+                list.add(player);
+            }
+        }
+        return list;
+    }
+
     public String getPlayerNameByTurn() { return this.players.get(turn).getName(); }
 
     public boolean existWinner() {
-        for(Player player : players) {
-            Body body = player.getBody();
-            if(body.isSavedHeart() && body.isSavedStomach() && body.isSavedBrain() && body.isSavedBone()) {
-                this.winner = player;
-                return true;
+        List<TypeOfOrgan> type = TypeOfOrgan.getListType();
+        Body body = this.getPlayerByTurn().getBody();
+        int healthyOrgan = 0;
+        for(int i=0; i<type.size(); i++) {
+            if(body.isHealthy(type.get(i))) {
+                healthyOrgan++;
             }
+        }
+        if(healthyOrgan>3) {
+            this.winner = this.getPlayerByTurn();
+            return true;
         }
         return false;
     }
@@ -121,7 +136,7 @@ public class Game {
         String result = "";
         for(List<String> row : matrix) {
             for(String element : row) {
-                result += element + "\t";
+                result += element;
             }
             result = result + "\n";
         }
@@ -136,12 +151,10 @@ public class Game {
     public String otherPlayersBody(String title) {
         Player actual = this.getPlayerByTurn();
         String bodyPlayers = "";
-        int i = 0;
         for (Player player : this.getPlayers()) {
             if (!player.equals(actual)) {
-                bodyPlayers = bodyPlayers + i + String.format(title, player.getName()) + "\n"
+                bodyPlayers = bodyPlayers + String.format(title, player.getName()) + "\n"
                         + this.map(player.getBody().getStateMatrix()) + "\n";
-                i++;
             }
 
         }
@@ -166,7 +179,7 @@ public class Game {
         List<TypeOfOrgan> list = TypeOfOrgan.getListType();
         String result = "";
         for(int i=0; i<list.size(); i++) {
-            result += i + String.format(title, TypeOfOrgan.getNameType(list.get(i))) + "\n";
+            result += i+1 + String.format(title, TypeOfOrgan.getNameType(list.get(i))) + "\n";
         }
         return result;
     }
@@ -270,6 +283,30 @@ public class Game {
         if(this.getPlayerByTurn().getBody().playOrganThiefCard(playerToSteal, otherPlayerType)) {
             this.discardHandCard(cardPosition);
             return true;
+        }
+        return false;
+    }
+
+    public boolean playContagion(String selectedVirus, String playerToInfect, String organToInfect) {
+        List<TypeOfOrgan> list = TypeOfOrgan.getListType();
+        TypeOfOrgan virusType = list.get(Integer.parseInt(selectedVirus)-1);
+        Player player = this.getPlayers().get(this.getPlayerByName(playerToInfect));
+        TypeOfOrgan organType = list.get(Integer.parseInt(organToInfect)-1);
+
+        return this.getPlayerByTurn().getBody().playContagionCard(virusType, player, organType);
+    }
+
+    public boolean canInfect() {
+        Player playerInTurn = this.getPlayerByTurn();
+        List<TypeOfOrgan> typeOfOrgans = TypeOfOrgan.getListType();
+        for(Player player : players) {
+            if(!player.equals(playerInTurn)) {
+                for(TypeOfOrgan type : typeOfOrgans) {
+                    if (playerInTurn.getBody().canPlayContagionInBody(type, player)) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }

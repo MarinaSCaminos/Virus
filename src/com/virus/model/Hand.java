@@ -20,6 +20,18 @@ public class Hand {
         this.card3 = card3;
     }
 
+    public Card getCard() {
+        return card;
+    }
+
+    public Card getCard2() {
+        return card2;
+    }
+
+    public Card getCard3() {
+        return card3;
+    }
+
     public void discardHand() {
         this.card = null;
         this.card2 = null;

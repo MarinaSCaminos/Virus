@@ -123,8 +123,8 @@ public class Console { //TODO singleton console
                                         }
                                     }
                                 }else{ //Es de tipo Virus
-                                    System.out.println("Eliga a que jugador mandar el virus: ");
                                     System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
+                                    System.out.println("Eliga a que jugador mandar el virus: ");
                                     option2 = scanner.nextLine();
 
                                     System.out.println("Eliga en que pila jugar el virus: ");
@@ -164,12 +164,12 @@ public class Console { //TODO singleton console
 
 
                                 }else if(game.isOrganThief(option)) {
-                                    System.out.println("Elija a cual jugador intercambiar: ");
+                                    System.out.println("Elija a cual jugador robar: ");
                                     System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                     option2 = scanner.nextLine();
 
 
-                                    System.out.println("Elija por cual organo del jugador contrario intercambiar: ");
+                                    System.out.println("Elija cual organo del jugador contrario robar: ");
                                     List<TypeOfOrgan> list = TypeOfOrgan.getListType();
                                     System.out.println(game.mapOptions(". Usar en la pila de %s"));
                                     option3 = scanner.nextLine();
@@ -182,11 +182,39 @@ public class Console { //TODO singleton console
                                         System.out.println("No se pudo robar el organo.");
                                         // Dar un menu para que intente con otrova a inicio
                                     }
-
-
                                 }else if(game.isContagion(option)) {
+                                    if(game.canInfect()) {
+                                        game.discardHandCard(option);
+                                        while (game.canInfect()) {
+                                            // Poner en un while hasta que no pueda pasar mas virus
+
+                                            System.out.println("Elija el virus del organo que quieres transferir: ");
+                                            System.out.println(game.mapOptions(". Elegir virus del organo %s"));
+                                            option2 = scanner.nextLine();
 
 
+                                            System.out.println("Ingrese el nombre del jugador al cual pasarle el virus : ");
+                                            System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
+                                            option3 = scanner.nextLine();
+
+
+                                            System.out.println("Elija a cual organo infectar del jugador seleccionado: ");
+                                            List<TypeOfOrgan> list = TypeOfOrgan.getListType();
+                                            System.out.println(game.mapOptions(". Infectar %s"));
+                                            option4 = scanner.nextLine();
+
+                                            if(!game.playContagion(option2, option3, option4)) {
+                                                System.out.println("No puedes contagiar el organo seleccionado. Intende con otro.");
+                                            }else{
+                                                System.out.println("Se pudo infectar correctamente. " +
+                                                        "Se pedira nuevamente otro virus y cuerpo a contagiar en case de que este la posibilidad.");
+                                            }
+                                        }
+                                        playedOnce = true;
+                                        executedAnOption = true;
+                                    }else{
+                                        System.out.println("Cuidado, no se puede jugar esta carta!");
+                                    }
                                 }else if(game.isLatexGloves(option)) {
                                     game.playLatexGloves(option);
                                     playedOnce = true;
@@ -263,7 +291,7 @@ public class Console { //TODO singleton console
         String name = "";
         do{
             name = scanner.nextLine();
-            if(!name.isBlank()) {
+            if(!name.isBlank()) {   //TODO agregar condicion de nombres distintos
                 break;
             }
             System.out.print("Por favor, ingrese un nombre valido para eliminar: ");

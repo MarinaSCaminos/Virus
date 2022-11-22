@@ -56,6 +56,26 @@ public class Body {                             // medicine \u1F48A , virus \u1F
         this.savedMulticolor = false;
     }
 
+    public Stack<NormalCard> getHeart() {
+    return heart;
+    }
+
+    public Stack<NormalCard> getStomach() {
+    return stomach;
+    }
+
+    public Stack<NormalCard> getBrain() {
+    return brain;
+    }
+
+    public Stack<NormalCard> getBone() {
+        return bone;
+    }
+
+    public Stack<NormalCard> getMulticolor() {
+        return multicolor;
+    }
+
     public void setHeart(Stack<NormalCard> heart) {
         this.heart = heart;
     }
@@ -76,6 +96,20 @@ public class Body {                             // medicine \u1F48A , virus \u1F
         this.multicolor = multicolor;
     }
 
+    public boolean isHealthy(TypeOfOrgan type) {
+        if(type.equals(TypeOfOrgan.HEART)) {
+            return !this.heart.empty() && (this.heart.peek() instanceof Organ || this.heart.peek() instanceof Medicine);
+        }else if(type.equals(TypeOfOrgan.STOMACH)) {
+            return !this.stomach.empty() && (this.stomach.peek() instanceof Organ || this.stomach.peek() instanceof Medicine);
+        }else if(type.equals(TypeOfOrgan.BRAIN)) {
+            return !this.brain.empty() && (this.brain.peek() instanceof Organ || this.brain.peek() instanceof Medicine);
+        }else if(type.equals(TypeOfOrgan.BONE)) {
+            return !this.bone.empty() && (this.bone.peek() instanceof Organ || this.bone.peek() instanceof Medicine);
+        }else{
+            return !this.multicolor.empty() && (this.multicolor.peek() instanceof Organ || this.multicolor.peek() instanceof Medicine);
+        }
+    }
+
     private boolean isSaved(TypeOfOrgan type) {
         if(type.equals(TypeOfOrgan.HEART)) {
             return this.savedHeart;
@@ -90,14 +124,14 @@ public class Body {                             // medicine \u1F48A , virus \u1F
         }
     }
 
-    private void setStack(Stack<NormalCard> stack) {
-        if(stack.equals(heart)) {
+    private void setStack(Stack<NormalCard> stack, TypeOfOrgan type) {
+        if(type.equals(TypeOfOrgan.HEART)) {
             this.setHeart(stack);
-        }else if(stack.equals(stomach)) {
+        }else if(type.equals(TypeOfOrgan.STOMACH)) {
             this.setStomach(stack);
-        }else if(stack.equals(brain)) {
+        }else if(type.equals(TypeOfOrgan.BRAIN)) {
             this.setBrain(stack);
-        }else if(stack.equals(bone)) {
+        }else if(type.equals(TypeOfOrgan.BONE)) {
             this.setBone(stack);
         }else{
             this.setMulticolor(stack);
@@ -106,15 +140,15 @@ public class Body {                             // medicine \u1F48A , virus \u1F
 
     private Stack<NormalCard> getStackByType(TypeOfOrgan type) {
         if(type.equals(TypeOfOrgan.HEART)) {
-            return this.heart;
+            return this.getHeart();
         }else if(type.equals(TypeOfOrgan.STOMACH)) {
-            return this.stomach;
+            return this.getStomach();
         }else if(type.equals(TypeOfOrgan.BRAIN)) {
-            return this.brain;
+            return this.getBrain();
         }else if(type.equals(TypeOfOrgan.BONE)) {
-            return this.bone;
+            return this.getBone();
         }else{
-            return this.multicolor;
+            return this.getMulticolor();
         }
     }
 
@@ -310,32 +344,73 @@ public class Body {                             // medicine \u1F48A , virus \u1F
         return false;
     }
 
-    // TODO fijarme si el que obtengo no esta salvado
     public boolean playTransplantCard(TypeOfOrgan type, Player player, TypeOfOrgan otherPlayerType) {
-        // Si la stack mia y la del otro jugador no estan salvadas
         if(!this.isSaved(type) && !player.getBody().isSaved(otherPlayerType) && !this.getStackByType(type).empty() && !player.getBody().getStackByType(otherPlayerType).empty()) {
             if(type.equals(otherPlayerType)) { // SI son del mismo type, inercambio
                 Stack<NormalCard> aux = this.getStackByType(type) ;
-                this.setStack(player.getBody().getStackByType(otherPlayerType));
-                player.getBody().setStack(aux);
-            }else if(!this.isSaved(otherPlayerType) && !player.getBody().isSaved(type) && !this.getStackByType(otherPlayerType).empty() && !player.getBody().getStackByType(type).empty()) {
+                this.setStack(player.getBody().getStackByType(otherPlayerType), otherPlayerType);
+                player.getBody().setStack(aux, type);
+                return true;
+            }else if(!this.isSaved(otherPlayerType) && !player.getBody().isSaved(type) && this.getStackByType(otherPlayerType).empty() && player.getBody().getStackByType(type).empty()) {
                 Stack<NormalCard> aux = this.getStackByType(type) ;
-                this.setStack(player.getBody().getStackByType(otherPlayerType));
-                player.getBody().setStack(aux);
+                this.setStack(player.getBody().getStackByType(otherPlayerType), otherPlayerType);
+                player.getBody().setStack(aux, type);
 
-                this.getStackByType(type).clear();
-                player.getBody().getStackByType(otherPlayerType).clear();;
+                this.setStack(new Stack<>(), type);
+                player.getBody().setStack(new Stack<>(), otherPlayerType);
+                return true;
             }
         }
         return false;
     }
 
+    public boolean isNotEmptyOrSaved(TypeOfOrgan type) {
+        return !this.getStackByType(type).empty() && !this.isSaved(type);
+    }
+
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    private boolean hasAVirus(TypeOfOrgan type) {
+        return this.isNotEmptyOrSaved(type) && (this.getStackByType(type).peek() instanceof Virus);
+    }
+
+    private boolean hasOnlyOrgan(TypeOfOrgan type) {
+        return this.isNotEmptyOrSaved(type) && (this.getStackByType(type).peek() instanceof Organ);
+    }
+
+    private boolean canPlayContagion(TypeOfOrgan virusInOrgan, Player playerToInfect, TypeOfOrgan organToInfect) {
+        if(this.hasAVirus(virusInOrgan) && playerToInfect.getBody().hasOnlyOrgan(organToInfect)) {
+            return virusInOrgan.equals(TypeOfOrgan.MULTICOLOR) || organToInfect.equals(TypeOfOrgan.MULTICOLOR) ||
+                    virusInOrgan.equals(organToInfect);
+        }
+        return false;
+    }
+
+    public boolean playContagionCard(TypeOfOrgan virusInBody, Player playerToInfect, TypeOfOrgan organToInfect) {
+        if(this.canPlayContagion(virusInBody, playerToInfect, organToInfect)) {
+            return playerToInfect.getBody().addCard(this.getStackByType(virusInBody).pop(), organToInfect);
+        }
+        return false;
+    }
+
+    public boolean canPlayContagionInBody(TypeOfOrgan virusInOrgan, Player playerToInfect) {
+        if(virusInOrgan.equals(TypeOfOrgan.MULTICOLOR)) {
+            return this.canPlayContagion(virusInOrgan, playerToInfect, TypeOfOrgan.HEART) ||
+                    this.canPlayContagion(virusInOrgan, playerToInfect, TypeOfOrgan.STOMACH) ||
+                    this.canPlayContagion(virusInOrgan, playerToInfect, TypeOfOrgan.BRAIN) ||
+                    this.canPlayContagion(virusInOrgan, playerToInfect, TypeOfOrgan.BONE) ||
+                    this.canPlayContagion(virusInOrgan, playerToInfect, TypeOfOrgan.MULTICOLOR);
+        }
+        return this.canPlayContagion(virusInOrgan, playerToInfect, virusInOrgan) ||
+                this.canPlayContagion(virusInOrgan, playerToInfect, TypeOfOrgan.MULTICOLOR);
+    }
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     public boolean playOrganThiefCard(Player player, TypeOfOrgan otherPlayerType) {
-        // Si la stack mia y la del otro jugador no estan salvadas
         if (!player.getBody().isSaved(otherPlayerType) && !player.getBody().getStackByType(otherPlayerType).empty()) {
-            if (this.getStackByType(otherPlayerType).empty()) { // Si el stack robado estaba vacio en mi cuerpo
-                this.setStack(player.getBody().getStackByType(otherPlayerType));
-                player.getBody().getStackByType(otherPlayerType).clear();
+            if (this.getStackByType(otherPlayerType).empty()) {
+                this.setStack(player.getBody().getStackByType(otherPlayerType), otherPlayerType);
+                player.getBody().setStack(new Stack<>(), otherPlayerType);
+                return true;
             }
         }
         return false;
@@ -354,30 +429,43 @@ public class Body {                             // medicine \u1F48A , virus \u1F
     }
 
     public void fillMatrix(List<List<String>> matrix, boolean saved,Stack<NormalCard> stack, String organ, int position) {
-        if(saved) {
-            matrix.get(0).set(position, "M");
-            matrix.get(1).set(position, "M");
-            matrix.get(2).set(position, organ);
+        if(saved) { // TODO tiene que leer el valor de la pila por le multicolor
+            matrix.get(0).set(position, "Medicina\t\t");
+            matrix.get(1).set(position, "Medicina\t\t");
+            matrix.get(2).set(position, this.fixTabular(organ));
         }else if(!stack.empty()) {
             if(stack.peek() instanceof Virus) {
-                matrix.get(1).set(position, "V");
-                matrix.get(2).set(position, organ);
+                matrix.get(1).set(position, "Virus\t\t\t");
+                matrix.get(2).set(position, this.fixTabular(organ));
             }else if(stack.peek() instanceof Medicine) {
-                matrix.get(1).set(position, "M");
-                matrix.get(2).set(position, organ);
+                matrix.get(1).set(position, "Medicina\t\t"); // "Medicina X\t"
+                matrix.get(2).set(position, this.fixTabular(organ));
             }else{
-                matrix.get(2).set(position, organ);
+                matrix.get(2).set(position, this.fixTabular(organ));
             }
         }
+    }
+
+    private String fixTabular(String organ) {
+        if(organ.length() < 4) {
+            return organ + "\t\t\t\t";
+        }
+        if(organ.length() < 8) {
+            return organ + "\t\t\t";
+        }
+        if(organ.length() < 12) {
+            return organ + "\t\t";
+        }
+        return organ;
     }
 
     // TODO optimizar usando char o enum
     private List<List<String>> initializeMatrix() {
         List<List<String>> matrix = new ArrayList<>();
-        final String SPACE = " ";
-        for(int i=0; i<4; i++) {                        // <3
+        final String SPACE = "\t\t\t\t";
+        for(int i=0; i<3; i++) {
             List<String> list = new ArrayList<>();
-            for(int j=0; j<4; j++) {
+            for(int j=0; j<5; j++) {
                 list.add(SPACE);
             }
             matrix.add(list);
@@ -386,11 +474,11 @@ public class Body {                             // medicine \u1F48A , virus \u1F
         List<String> list = new ArrayList<>();
 
         // Forma de escapear UNICODE ya que no esta disponible en UTF8 mas de 4 caracteres
-        list.add("CORAZÓN" + Character.toString(0x2764));  // Corazon 0x1FAC0
-        list.add("ESTÓMAGO" + Character.toString(0x1F49A)); // Pulmon 0x1FAC1 --> no hay de estomago
-        list.add("CEREBRO" + Character.toString(0x1F499));  // Cerebro 0x1F9E0
-        list.add("HUESO" + Character.toString(0x1F49B));    // Hueso 0x1F9B4
-        list.add("MULTICOLOR" + Character.toString(0x1F90D)); // 0x1F464, Arcoiris 1F308
+        list.add("CORAZÓN " + Character.toString(0x1FAC0) + "\t | \t");  // Corazon 0x1FAC0 1F7E5
+        list.add("ESTÓMAGO " + Character.toString(0x1F7E9) + "\t | \t"); // Pulmon 0x1FAC1 --> no hay de estomago
+        list.add("CEREBRO " + Character.toString(0x1F9E0) + "\t | \t");  // Cerebro 0x1F9E0  1F7E6
+        list.add("HUESO " + Character.toString(0x1F9B4) + "\t | \t");    // Hueso 0x1F9B4   1F7E8
+        list.add("MULTICOLOR " + Character.toString(0x1F6B6)); // 0x1F464, Arcoiris 1F308
 
         matrix.add(list);
 
