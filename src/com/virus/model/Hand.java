@@ -20,18 +20,6 @@ public class Hand {
         this.card3 = card3;
     }
 
-    public Card getCard() {
-        return card;
-    }
-
-    public Card getCard2() {
-        return card2;
-    }
-
-    public Card getCard3() {
-        return card3;
-    }
-
     public void discardHand() {
         this.card = null;
         this.card2 = null;
@@ -39,22 +27,37 @@ public class Hand {
     }
 
     // TODO separar funcion descartar en Game
-    public boolean operateHand(Card card, boolean discard) {
-        if(card.equals(this.card)) {
-            if(discard) {
-                discardCard(this.card);
+
+    public boolean operateHand(Card card) {
+        return this.operateHand(card, false, null);
+    }
+
+    public boolean operateHand(Card card, DiscardPile discardPile) {
+        return this.operateHand(card, true, discardPile);
+    }
+
+    /**
+     * Precondicion:
+     * Es obligatorio que el card que recibe como parametro no sea null
+     */
+    private boolean operateHand(Card card, boolean discard, DiscardPile discardPile) {
+        if (card.equals(this.card)) {
+            if (discard) {
+                discardPile.addCard(this.card);
             }
             this.card = null;
             return true;
-        }else if(card.equals(this.card2)) {
-            if(discard) {
-                discardCard(this.card2);
+        }
+        if (card.equals(this.card2)) {
+            if (discard) {
+                discardPile.addCard(this.card2);
             }
             this.card2 = null;
             return true;
-        }else if(card.equals(card3)) {
-            if(discard) {
-                discardCard(this.card3);
+        }
+        if (card.equals(card3)) {
+            if (discard) {
+                discardPile.addCard(this.card3);
             }
             this.card3 = null;
             return true;
@@ -62,18 +65,14 @@ public class Hand {
         return false;
     }
 
-    private void discardCard(Card card) {
-        DiscardPile.getInstance().addCard(card);
-    }
-
     public void reFillHand() {
-        if(this.card == null) {
+        if (this.card == null) {
             this.card = Deck.getInstance().getCard();
         }
-        if(this.card2 == null) {
+        if (this.card2 == null) {
             this.card2 = Deck.getInstance().getCard();
         }
-        if(this.card3 == null) {
+        if (this.card3 == null) {
             this.card3 = Deck.getInstance().getCard();
         }
     }
@@ -84,13 +83,13 @@ public class Hand {
 
     public List<Card> listCard() {
         List<Card> cards = new ArrayList<>();
-        if(card != null) {
+        if (card != null) {
             cards.add(card);
         }
-        if(card2 != null) {
+        if (card2 != null) {
             cards.add(card2);
         }
-        if(card3 != null) {
+        if (card3 != null) {
             cards.add(card3);
         }
         return cards;
@@ -102,91 +101,31 @@ public class Hand {
         List<String> list = new ArrayList<>();
 
         int numb = 0;
-        for(Card card : cards) {  //TODO crear un diccionario
+        for (Card card : cards) {  //TODO crear un diccionario
             numb++;
-            if(card != null) {      // No va a suceder
-                if (card instanceof Organ) {
-                    String type = "";
-                    if (((Organ) card).getType().equals(TypeOfOrgan.HEART)) {
-                        type = "Heart";
+            if (card != null) {      // No va a suceder
+                String type;
+                if (card instanceof NormalCard) {
+                    type = ((NormalCard) card).getType().getSpanishName();
+                    if (card instanceof Organ) {
+                        String state = numb + ". " + "Órgano - " + type;
+                        list.add(state);
+                    } else if (card instanceof Medicine) {
+                        String state = numb + ". " + "Medicina - " + type;
+                        list.add(state);
+                    } else if (card instanceof Virus) {
+                        String state = numb + ". " + "Virus - " + type;
+                        list.add(state);
                     }
-                    if (((Organ) card).getType().equals(TypeOfOrgan.STOMACH)) {
-                        type = "Stomach";
-                    }
-                    if (((Organ) card).getType().equals(TypeOfOrgan.BRAIN)) {
-                        type = "Brain";
-                    }
-                    if (((Organ) card).getType().equals(TypeOfOrgan.BONE)) {
-                        type = "Bone";
-                    }
-                    if (((Organ) card).getType().equals(TypeOfOrgan.MULTICOLOR)) {
-                        type = "Multicolor";
-                    }
-                    String state = numb +  ". " + "Organo - " + type;
-                    list.add(state);
-                } else if (card instanceof Medicine) {
-                    String type = "";
-                    if (((Medicine) card).getType().equals(TypeOfOrgan.HEART)) {
-                        type = "Heart";
-                    }
-                    if (((Medicine) card).getType().equals(TypeOfOrgan.STOMACH)) {
-                        type = "Stomach";
-                    }
-                    if (((Medicine) card).getType().equals(TypeOfOrgan.BRAIN)) {
-                        type = "Brain";
-                    }
-                    if (((Medicine) card).getType().equals(TypeOfOrgan.BONE)) {
-                        type = "Bone";
-                    }
-                    if (((Medicine) card).getType().equals(TypeOfOrgan.MULTICOLOR)) {
-                        type = "Multicolor";
-                    }
-                    String state = numb +  ". " + "Medicine - " + type;
-                    list.add(state);
-                } else if (card instanceof Virus) {
-                    String type = "";
-                    if (((Virus) card).getType().equals(TypeOfOrgan.HEART)) {
-                        type = "Heart";
-                    }
-                    if (((Virus) card).getType().equals(TypeOfOrgan.STOMACH)) {
-                        type = "Stomach";
-                    }
-                    if (((Virus) card).getType().equals(TypeOfOrgan.BRAIN)) {
-                        type = "Brain";
-                    }
-                    if (((Virus) card).getType().equals(TypeOfOrgan.BONE)) {
-                        type = "Bone";
-                    }
-                    if (((Virus) card).getType().equals(TypeOfOrgan.MULTICOLOR)) {
-                        type = "Multicolor";
-                    }
-                    String state = numb +  ". " + "Virus - " + type;
-                    list.add(state);
                 } else if (card instanceof Treatment) {
-                    String type = "";
-                    if (((Treatment) card).getType().equals(TypeOfTreatment.TRANSPLANT)) {
-                        type = "Transplant";
-                    }
-                    if (((Treatment) card).getType().equals(TypeOfTreatment.ORGAN_THIEF)) {
-                        type = "Organ Thief";
-                    }
-                    if (((Treatment) card).getType().equals(TypeOfTreatment.CONTAGION)) {
-                        type = "Contagion";
-                    }
-                    if (((Treatment) card).getType().equals(TypeOfTreatment.LATEX_GLOVES)) {
-                        type = "Latex Gloves";
-                    }
-                    if (((Treatment) card).getType().equals(TypeOfTreatment.MEDICAL_ERROR)) {
-                        type = "Medical Error";
-                    }
-                    String state = numb +  ". " + "Treatment - " + type;
+                    type = ((Treatment) card).getType().getSpanishTreatmentName();
+                    String state = numb + ". " + "Tratamiento - " + type;
                     list.add(state);
                 }
             }
         }
-            return list;
+        return list;
     }
-
 
 
 }

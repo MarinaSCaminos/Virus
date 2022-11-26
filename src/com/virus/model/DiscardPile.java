@@ -9,7 +9,7 @@ public class DiscardPile {
     private static DiscardPile INSTANCE;
     private final Stack<Card> stack;
 
-    private  DiscardPile() {
+    private DiscardPile() {
         stack = new Stack<>();
     }
 
@@ -20,13 +20,17 @@ public class DiscardPile {
         return INSTANCE;
     }
 
-    public Card getCard(){
+    public Card getCard() {
         return stack.pop();
     }
 
-    public Stack<Card> getStack() { return stack; }
+    public Stack<Card> getStack() {
+        return stack;
+    }
 
-    public void addCard(Card card) { stack.add(card);}
+    public void addCard(Card card) {
+        stack.add(card);
+    }
 
     public boolean empty() {
         return stack.empty();

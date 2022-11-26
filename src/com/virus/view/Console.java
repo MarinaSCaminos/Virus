@@ -1,9 +1,7 @@
 package com.virus.view;
 
 import com.virus.controller.Game;
-import com.virus.model.enums.TypeOfOrgan;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Console { //TODO singleton console
@@ -36,28 +34,28 @@ public class Console { //TODO singleton console
                 option = scanner.nextLine();
             } while (!option.equals("1") && !option.equals("2") && !option.equals("3") && !option.equals("4"));
 
-            if(option.equals("1")) {
-                if(players<6) {
+            if (option.equals("1")) {
+                if (players < 6) {
                     System.out.print("Ingrese el nombre del nuevo jugador: ");
                     requestPlayer();
                     players++;
-                }else{
+                } else {
                     System.out.print("No se pueden agregar mas jugadores");
                 }
-            }else if(option.equals("2")) {
+            } else if (option.equals("2")) {
                 System.out.print("Ingrese el nombre del jugador que quiere eliminar: ");
                 if (!requestPlayerToDelete()) {
                     System.out.println("No existe el jugador.");
-                }else{
+                } else {
                     players--;
                 }
-            }else if(option.equals("3")) {
+            } else if (option.equals("3")) {
                 System.out.println("Los jugadores son: ");
                 System.out.println(game.getListOfPlayers());
-            }else{
+            } else {
                 break;
             }
-        }while(true);
+        } while (true);
 
         game.initialize();
 
@@ -65,10 +63,11 @@ public class Console { //TODO singleton console
     }
 
     private void start() {
+        boolean existWinner = false;
         do {
             System.out.println("Le toca al jugador " + game.getPlayerNameByTurn() + "\n");
 
-            if(game.actualHandPlayerIsEmpty()) {
+            if (game.actualHandPlayerIsEmpty()) {
                 System.out.println("Tu mano esta vacia, se rellenara y continuara el siguient jugador");
                 this.preparedNextTurn();
                 continue;
@@ -91,9 +90,9 @@ public class Console { //TODO singleton console
                 System.out.println("1. Jugar una carta. \n2. Descartar una carta. \n3. Terminar turno");
                 option = scanner.nextLine();
 
-                // TODO hacer un while por cada ingreso de dato
+                // TODO hacer un while por cada ingreso de dato, y verfique que el nombre del jugador ingreaso no sea el del turno
                 // TODO No mostrar la opcion de jugar en caso de que no se pueda ¿?
-                if (option.equals("1")) {  /** JUGAR **/
+                if (option.equals("1")) {
                     if (!playedOnce) {
                         System.out.println("Elija cual carta jugar:");
                         System.out.println(game.mapCard());
@@ -101,17 +100,17 @@ public class Console { //TODO singleton console
 
                         if (option.equals("1") || option.equals("2") || option.equals("3")) {
                             // Si es Organo, Virus o Medicina
-                            if(game.isNormalCard(option)) { // NO es necesaria
+                            if (game.isNormalCard(option)) { // NO es necesaria
 
-                                if(game.isOrgan(option)){ // Es de tipo Organo
-                                    if(game.addOrganToBody(option)) {
+                                if (game.isOrgan(option)) {
+                                    if (game.addOrganToBody(option)) {
                                         playedOnce = true;
                                         executedAnOption = true;
-                                    }else{
+                                    } else {
                                         System.out.println("No se puede agregar el órgano. Se recomienda descartar la carta");
                                     }
 
-                                }else if(game.isMedicine(option)) {  // Es de tipo Medicina
+                                } else if (game.isMedicine(option)) {  // Es de tipo Medicina
                                     System.out.println("Elija en donde jugar la carta seleccionada: ");
                                     System.out.println(game.mapOptions(". Usar en la pila de %s")); // Da la lista de tipos del cuerpo para elegir
                                     option2 = scanner.nextLine();
@@ -122,7 +121,7 @@ public class Console { //TODO singleton console
                                             executedAnOption = true;
                                         }
                                     }
-                                }else{ //Es de tipo Virus
+                                } else { //Es de tipo Virus
                                     System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                     System.out.println("Eliga a que jugador mandar el virus: ");
                                     option2 = scanner.nextLine();
@@ -131,12 +130,12 @@ public class Console { //TODO singleton console
                                     System.out.println(game.mapOptions(". Usar en la pila de %s"));
                                     option3 = scanner.nextLine();
 
-                                    if(game.addVirusToBody(option, option3, game.getPlayerByName(option2))) {
+                                    if (game.addVirusToBody(option, option3, game.getPlayerByName(option2))) {
                                         playedOnce = true;
                                         executedAnOption = true;
                                     }
                                 }
-                            }else{ // Si es Tratamiento
+                            } else { // Si es Tratamiento
                                 String option4;
 
                                 if (game.isTransplant(option)) {
@@ -154,36 +153,35 @@ public class Console { //TODO singleton console
                                     option4 = scanner.nextLine();
 
                                     //option2: stackToSwap , option3: selectedPlayer , option4: playerStackToSwap
-                                    if(game.playTransplant(option, option2, option3, option4)) {
+                                    if (game.playTransplant(option, option2, option3, option4)) {
                                         playedOnce = true;
                                         executedAnOption = true;
-                                    }else{
+                                    } else {
                                         System.out.println("No se pudo intercambiar los organos.");
                                         // Dar un menu para que intente con otrova a inicio
                                     }
 
 
-                                }else if(game.isOrganThief(option)) {
+                                } else if (game.isOrganThief(option)) {
                                     System.out.println("Elija a cual jugador robar: ");
                                     System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                     option2 = scanner.nextLine();
 
 
                                     System.out.println("Elija cual organo del jugador contrario robar: ");
-                                    List<TypeOfOrgan> list = TypeOfOrgan.getListType();
                                     System.out.println(game.mapOptions(". Usar en la pila de %s"));
                                     option3 = scanner.nextLine();
 
                                     // option2: jugador seleccionado , option3: cuerpo a robar
-                                    if(game.playOrganThief(option, option2, option3)) {
+                                    if (!game.notPlayerInTurn(option2) && game.playOrganThief(option, option2, option3)) {
                                         playedOnce = true;
                                         executedAnOption = true;
-                                    }else{
+                                    } else {
                                         System.out.println("No se pudo robar el organo.");
                                         // Dar un menu para que intente con otrova a inicio
                                     }
-                                }else if(game.isContagion(option)) {
-                                    if(game.canInfect()) {
+                                } else if (game.isContagion(option)) {
+                                    if (game.canInfect()) {
                                         game.discardHandCard(option);
                                         while (game.canInfect()) {
                                             // Poner en un while hasta que no pueda pasar mas virus
@@ -199,29 +197,27 @@ public class Console { //TODO singleton console
 
 
                                             System.out.println("Elija a cual organo infectar del jugador seleccionado: ");
-                                            List<TypeOfOrgan> list = TypeOfOrgan.getListType();
                                             System.out.println(game.mapOptions(". Infectar %s"));
                                             option4 = scanner.nextLine();
 
-                                            if(!game.playContagion(option2, option3, option4)) {
+                                            if (!game.playContagion(option2, option3, option4)) {
                                                 System.out.println("No puedes contagiar el organo seleccionado. Intende con otro.");
-                                            }else{
+                                            } else {
                                                 System.out.println("Se pudo infectar correctamente. " +
                                                         "Se pedira nuevamente otro virus y cuerpo a contagiar en case de que este la posibilidad.");
                                             }
                                         }
                                         playedOnce = true;
                                         executedAnOption = true;
-                                    }else{
+                                    } else {
                                         System.out.println("Cuidado, no se puede jugar esta carta!");
                                     }
-                                }else if(game.isLatexGloves(option)) {
+                                } else if (game.isLatexGloves(option)) {
                                     game.playLatexGloves(option);
                                     playedOnce = true;
                                     executedAnOption = true;
 
-                                }else if(game.isMedicalError(option)) {
-                                    // Intercambia cuerpo
+                                } else if (game.isMedicalError(option)) {
                                     System.out.println("Elija a cual jugador intercambiarle el cuerpo: ");
                                     System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                     option2 = scanner.nextLine();
@@ -233,14 +229,14 @@ public class Console { //TODO singleton console
                                 }
                             }
 
-                        }else{ // No eligio una carta de la mano, dato mal ingresado
+                        } else { // No eligio una carta de la mano, dato mal ingresado
                             System.out.println("El dato ingresado no es una opcion valida."); // TODO crear un while
                         }
-                    }else{
+                    } else {
                         System.out.println("No puedes jugar mas de una carta a la vez.");
                     }
 
-                }else if(option.equals("2")) {      // DESCARTAR
+                } else if (option.equals("2")) {      // DESCARTAR
                     System.out.println("Elija cual carta descartar:");
                     System.out.println(game.mapCard());
                     option = scanner.nextLine();
@@ -252,19 +248,23 @@ public class Console { //TODO singleton console
                         System.out.println("El dato ingresado no es una opcion valida.");  // TODO crear un while
                     }
 
-                }else if(option.equals("3")) {    // FINALIZAR TURNO
-                    if(executedAnOption) {
+                } else if (option.equals("3")) {    // FINALIZAR TURNO
+                    if (executedAnOption) {
                         // llene mano jugador
                         break;
-                    }else{
+                    } else {
                         System.out.println("Debes jugar o descartar al menos una carta.");
                     }
                 }
-            } while (!game.actualHandPlayerIsEmpty());
+            } while (!game.actualHandPlayerIsEmpty() && !game.existWinner());
 
-            this.preparedNextTurn();
+            if (game.existWinner()) {
+                existWinner = true;
+            } else {
+                this.preparedNextTurn();
+            }
 
-        } while(!game.existWinner());
+        } while (!existWinner);
 
         end();
     }
@@ -275,27 +275,27 @@ public class Console { //TODO singleton console
 
     private void requestPlayer() {
         Scanner scanner = new Scanner(System.in);
-        String name = "";
-        do{
+        String name;
+        do {
             name = scanner.nextLine();
-            if(!name.isBlank() ){
+            if (!name.isBlank() && !game.existPlayer(name)) {
                 break;
             }
-            System.out.println("Por favor, ingrese un nombre valido: ");
-        } while(true);
+            System.out.println("Por favor, ingrese un nombre valido y no repetido: ");
+        } while (true);
         game.addPlayer(name);
     }
 
     private boolean requestPlayerToDelete() {
         Scanner scanner = new Scanner(System.in);
-        String name = "";
-        do{
+        String name;
+        do {
             name = scanner.nextLine();
-            if(!name.isBlank()) {   //TODO agregar condicion de nombres distintos
+            if (!name.isBlank() && game.existPlayer(name)) {   //TODO agregar condicion de nombres distintos
                 break;
             }
             System.out.print("Por favor, ingrese un nombre valido para eliminar: ");
-        } while(true);
+        } while (true);
         return game.deletePlayer(name);
     }
 

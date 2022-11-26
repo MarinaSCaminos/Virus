@@ -1,6 +1,5 @@
 package com.virus.model;
 
-import com.virus.controller.Game;
 import com.virus.model.card.Medicine;
 import com.virus.model.card.Organ;
 import com.virus.model.card.Treatment;
@@ -15,9 +14,9 @@ public class Helper {
 
     private static Helper INSTANCE;
     private final Map<String, String> cardsDescription; // Map --> Diccionario  (generico)
-                                                        // HashMap --> es un diccionario que utiliza un hash por dentro
+    // HashMap --> es un diccionario que utiliza un hash por dentro
 
-    private Helper(){
+    private Helper() {
         this.cardsDescription = new HashMap<>();
         this.cardsDescription.put(String.format("%s - %s", Virus.class.getSimpleName(), TypeOfOrgan.BONE.name()),
                 "Puede infectar el organo \"Hueso\" ");        //put --> si no existe lo agrega, si existe lo reemplaza
@@ -67,7 +66,7 @@ public class Helper {
     }
 
     public static Helper getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new Helper();
         }
         return INSTANCE;

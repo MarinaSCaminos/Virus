@@ -4,11 +4,11 @@ import java.util.Objects;
 
 public class Player { // TODO agregar el modificador de nombre en jugadores
 
-    private String name;
+    private final String name;
     private Hand hand;
     private Body body;
 
-    public Player(String name){
+    public Player(String name) {
         this.name = name;
     }
 
@@ -16,15 +16,11 @@ public class Player { // TODO agregar el modificador de nombre en jugadores
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setHand(Hand hand){
+    public void setHand(Hand hand) {
         this.hand = hand;
     }
 
-    public void setBody(Body body){
+    public void setBody(Body body) {
         this.body = body;
     }
 
@@ -33,7 +29,7 @@ public class Player { // TODO agregar el modificador de nombre en jugadores
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Player player = (Player) o;
-        return name.equals(player.name);
+        return name.equalsIgnoreCase(player.name);
     }
 
     @Override
@@ -50,8 +46,8 @@ public class Player { // TODO agregar el modificador de nombre en jugadores
     }
 
     public void playMedicalErrorCard(Player player) {
-        Body thisBody = this.getBody();
-        this.setBody(player.getBody());
+        Body thisBody = this.body;
+        this.body = player.getBody();
         player.setBody(thisBody);
     }
 }
