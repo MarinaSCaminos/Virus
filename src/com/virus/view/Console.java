@@ -1,15 +1,23 @@
 package com.virus.view;
 
-import com.virus.model.Game;
+import com.virus.controller.Controller;
 
 import java.util.Scanner;
 
 public class Console { //TODO singleton console
 
-    private final Game game;
+    private static Console INSTANCE;
+    private final Controller controller;
 
-    public Console() {
-        this.game = Game.getInstance();
+    private Console() {
+        this.controller = Controller.getInstance();
+    }
+
+    public static Console getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Console();
+        }
+        return INSTANCE;
     }
 
     public void play() {
@@ -51,13 +59,13 @@ public class Console { //TODO singleton console
                 }
             } else if (option.equals("3")) {
                 System.out.println("Los jugadores son: ");
-                System.out.println(game.getListOfPlayers());
+                System.out.println(controller.getListOfPlayers());
             } else {
                 break;
             }
         } while (true);
 
-        game.initialize();
+        controller.initialize();
 
         this.start();
     }
@@ -65,19 +73,19 @@ public class Console { //TODO singleton console
     private void start() {
         boolean existWinner = false;
         do {
-            System.out.println("Le toca al jugador " + game.getPlayerNameByTurn() + "\n");
+            System.out.println("Le toca al jugador " + controller.getPlayerNameByTurn() + "\n");
 
-            if (game.actualHandPlayerIsEmpty()) {
+            if (controller.actualHandPlayerIsEmpty()) {
                 System.out.println("Tu mano esta vacia, se rellenara y continuara el siguient jugador");
                 this.preparedNextTurn();
                 continue;
             }
 
-            System.out.println(game.otherPlayersBody("Cuerpo de jugador %s"));
+            System.out.println(controller.otherPlayersBody("Cuerpo de jugador %s"));
             System.out.println("Tu cuerpo: ");
-            System.out.println(game.mapPlayerInTurn());
+            System.out.println(controller.mapPlayerInTurn());
             System.out.println("Tu mano: ");
-            System.out.println(game.mapCard());
+            System.out.println(controller.mapCard());
 
             boolean playedOnce = false;
             boolean executedAnOption = false;
@@ -95,42 +103,42 @@ public class Console { //TODO singleton console
                 if (option.equals("1")) {
                     if (!playedOnce) {
                         System.out.println("Elija cual carta jugar:");
-                        System.out.println(game.mapCard());
+                        System.out.println(controller.mapCard());
                         option = scanner.nextLine();
 
                         if (option.equals("1") || option.equals("2") || option.equals("3")) {
                             // Si es Organo, Virus o Medicina
-                            if (game.isNormalCard(option)) { // NO es necesaria
+                            if (controller.isNormalCard(option)) { // NO es necesaria
 
-                                if (game.isOrgan(option)) {
-                                    if (game.addOrganToBody(option)) {
+                                if (controller.isOrgan(option)) {
+                                    if (controller.addOrganToBody(option)) {
                                         playedOnce = true;
                                         executedAnOption = true;
                                     } else {
                                         System.out.println("No se puede agregar el órgano. Se recomienda descartar la carta");
                                     }
 
-                                } else if (game.isMedicine(option)) {  // Es de tipo Medicina
+                                } else if (controller.isMedicine(option)) {  // Es de tipo Medicina
                                     System.out.println("Elija en donde jugar la carta seleccionada: ");
-                                    System.out.println(game.mapOptions(". Usar en la pila de %s")); // Da la lista de tipos del cuerpo para elegir
+                                    System.out.println(controller.mapOptions(". Usar en la pila de %s")); // Da la lista de tipos del cuerpo para elegir
                                     option2 = scanner.nextLine();
 
                                     if (option2.equals("1") || option2.equals("2") || option2.equals("3") || option2.equals("4") || option2.equals("5")) {
-                                        if (game.addMedicineToBody(option, option2)) {
+                                        if (controller.addMedicineToBody(option, option2)) {
                                             playedOnce = true;
                                             executedAnOption = true;
                                         }
                                     }
                                 } else { //Es de tipo Virus
-                                    System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
+                                    System.out.println(controller.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                     System.out.println("Eliga a que jugador mandar el virus: ");
                                     option2 = scanner.nextLine();
 
                                     System.out.println("Eliga en que pila jugar el virus: ");
-                                    System.out.println(game.mapOptions(". Usar en la pila de %s"));
+                                    System.out.println(controller.mapOptions(". Usar en la pila de %s"));
                                     option3 = scanner.nextLine();
 
-                                    if (game.addVirusToBody(option, option3, game.getPlayerByName(option2))) {
+                                    if (controller.addVirusToBody(option, option3, controller.getPositionPlayerByName(option2))) {
                                         playedOnce = true;
                                         executedAnOption = true;
                                     }
@@ -138,22 +146,22 @@ public class Console { //TODO singleton console
                             } else { // Si es Tratamiento
                                 String option4;
 
-                                if (game.isTransplant(option)) {
+                                if (controller.isTransplant(option)) {
                                     System.out.println("Elija que organo de su cuerpo intercambiar: ");
-                                    System.out.println(game.mapOptions(". Intercambiar la pila de %s"));
+                                    System.out.println(controller.mapOptions(". Intercambiar la pila de %s"));
                                     option2 = scanner.nextLine();
 
                                     System.out.println("Elija a cual jugador intercambiar: ");
-                                    System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
+                                    System.out.println(controller.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                     option3 = scanner.nextLine();
 
 
                                     System.out.println("Elija por cual organo del jugador contrario intercambiar: ");
-                                    System.out.println(game.mapOptions(". Intercambiar la pila de %s"));
+                                    System.out.println(controller.mapOptions(". Intercambiar la pila de %s"));
                                     option4 = scanner.nextLine();
 
                                     //option2: stackToSwap , option3: selectedPlayer , option4: playerStackToSwap
-                                    if (game.playTransplant(option, option2, option3, option4)) {
+                                    if (controller.playTransplant(option, option2, option3, option4)) {
                                         playedOnce = true;
                                         executedAnOption = true;
                                     } else {
@@ -162,45 +170,45 @@ public class Console { //TODO singleton console
                                     }
 
 
-                                } else if (game.isOrganThief(option)) {
+                                } else if (controller.isOrganThief(option)) {
                                     System.out.println("Elija a cual jugador robar: ");
-                                    System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
+                                    System.out.println(controller.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                     option2 = scanner.nextLine();
 
 
                                     System.out.println("Elija cual organo del jugador contrario robar: ");
-                                    System.out.println(game.mapOptions(". Usar en la pila de %s"));
+                                    System.out.println(controller.mapOptions(". Usar en la pila de %s"));
                                     option3 = scanner.nextLine();
 
                                     // option2: jugador seleccionado , option3: cuerpo a robar
-                                    if (!game.notPlayerInTurn(option2) && game.playOrganThief(option, option2, option3)) {
+                                    if (!controller.notPlayerInTurn(option2) && controller.playOrganThief(option, option2, option3)) {
                                         playedOnce = true;
                                         executedAnOption = true;
                                     } else {
                                         System.out.println("No se pudo robar el organo.");
                                         // Dar un menu para que intente con otrova a inicio
                                     }
-                                } else if (game.isContagion(option)) {
-                                    if (game.canInfect()) {
-                                        game.discardHandCard(option);
-                                        while (game.canInfect()) {
+                                } else if (controller.isContagion(option)) {
+                                    if (controller.canInfect()) {
+                                        controller.discardHandCard(option);
+                                        while (controller.canInfect()) {
                                             // Poner en un while hasta que no pueda pasar mas virus
 
                                             System.out.println("Elija el virus del organo que quieres transferir: ");
-                                            System.out.println(game.mapOptions(". Elegir virus del organo %s"));
+                                            System.out.println(controller.mapOptions(". Elegir virus del organo %s"));
                                             option2 = scanner.nextLine();
 
 
                                             System.out.println("Ingrese el nombre del jugador al cual pasarle el virus : ");
-                                            System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
+                                            System.out.println(controller.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                             option3 = scanner.nextLine();
 
 
                                             System.out.println("Elija a cual organo infectar del jugador seleccionado: ");
-                                            System.out.println(game.mapOptions(". Infectar %s"));
+                                            System.out.println(controller.mapOptions(". Infectar %s"));
                                             option4 = scanner.nextLine();
 
-                                            if (!game.playContagion(option2, option3, option4)) {
+                                            if (!controller.playContagion(option2, option3, option4)) {
                                                 System.out.println("No puedes contagiar el organo seleccionado. Intende con otro.");
                                             } else {
                                                 System.out.println("Se pudo infectar correctamente. " +
@@ -212,17 +220,17 @@ public class Console { //TODO singleton console
                                     } else {
                                         System.out.println("Cuidado, no se puede jugar esta carta!");
                                     }
-                                } else if (game.isLatexGloves(option)) {
-                                    game.playLatexGloves(option);
+                                } else if (controller.isLatexGloves(option)) {
+                                    controller.playLatexGloves(option);
                                     playedOnce = true;
                                     executedAnOption = true;
 
-                                } else if (game.isMedicalError(option)) {
+                                } else if (controller.isMedicalError(option)) {
                                     System.out.println("Elija a cual jugador intercambiarle el cuerpo: ");
-                                    System.out.println(game.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
+                                    System.out.println(controller.otherPlayersBody("Cuerpo de jugador %s")); // Funcion que me muestra el cuerpo de los demas jugadores
                                     option2 = scanner.nextLine();
 
-                                    game.playMedicalError(option, option2);
+                                    controller.playMedicalError(option, option2);
                                     playedOnce = true;
                                     executedAnOption = true;
 
@@ -238,12 +246,12 @@ public class Console { //TODO singleton console
 
                 } else if (option.equals("2")) {      // DESCARTAR
                     System.out.println("Elija cual carta descartar:");
-                    System.out.println(game.mapCard());
+                    System.out.println(controller.mapCard());
                     option = scanner.nextLine();
-                    if (Integer.parseInt(option) <= game.getNumberOfCards()) { // Menos que la cantidad de cartas de Mano
-                        game.discardHandCard(option);
+                    if (Integer.parseInt(option) <= controller.getNumberOfCards()) { // Menos que la cantidad de cartas de Mano
+                        controller.discardHandCard(option);
                         executedAnOption = true;
-                        System.out.println(game.mapCard());
+                        System.out.println(controller.mapCard());
                     } else {
                         System.out.println("El dato ingresado no es una opcion valida.");  // TODO crear un while
                     }
@@ -256,9 +264,9 @@ public class Console { //TODO singleton console
                         System.out.println("Debes jugar o descartar al menos una carta.");
                     }
                 }
-            } while (!game.actualHandPlayerIsEmpty() && !game.existWinner());
+            } while (!controller.actualHandPlayerIsEmpty() && !controller.existWinner());
 
-            if (game.existWinner()) {
+            if (controller.existWinner()) {
                 existWinner = true;
             } else {
                 this.preparedNextTurn();
@@ -270,7 +278,7 @@ public class Console { //TODO singleton console
     }
 
     private void end() {
-        System.out.print("El ganador es: " + game.geWinnerName());
+        System.out.print("El ganador es: " + controller.getWinnerName());
     }
 
     private void requestPlayer() {
@@ -278,12 +286,12 @@ public class Console { //TODO singleton console
         String name;
         do {
             name = scanner.nextLine();
-            if (!name.isBlank() && !game.existPlayer(name)) {
+            if (!name.isBlank() && !controller.existPlayer(name)) {
                 break;
             }
             System.out.println("Por favor, ingrese un nombre valido y no repetido: ");
         } while (true);
-        game.addPlayer(name);
+        controller.addPlayer(name);
     }
 
     private boolean requestPlayerToDelete() {
@@ -291,16 +299,16 @@ public class Console { //TODO singleton console
         String name;
         do {
             name = scanner.nextLine();
-            if (!name.isBlank() && game.existPlayer(name)) {   //TODO agregar condicion de nombres distintos
+            if (!name.isBlank() && controller.existPlayer(name)) {   //TODO agregar condicion de nombres distintos
                 break;
             }
             System.out.print("Por favor, ingrese un nombre valido para eliminar: ");
         } while (true);
-        return game.deletePlayer(name);
+        return controller.deletePlayer(name);
     }
 
     public void preparedNextTurn() {
-        game.actualHandPlayerReFill();
+        controller.actualHandPlayerRefill();
 
         System.out.print("Presione Enter para continuar con el siguiente jugador.");
         Scanner scanner = new Scanner(System.in);
@@ -310,7 +318,7 @@ public class Console { //TODO singleton console
             option = scanner.nextLine();
         }
 
-        game.nextTurn();
+        controller.nextTurn();
     }
 
 }

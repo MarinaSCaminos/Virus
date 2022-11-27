@@ -119,7 +119,7 @@ public class Game implements Observer {
         return false;
     }
 
-    public String geWinnerName() {
+    public String getWinnerName() {
         return this.winner.getName();
     }
 
@@ -131,12 +131,12 @@ public class Game implements Observer {
         return this.getPlayerByTurn().getHand().isHandEmpty();
     }
 
-    public void actualHandPlayerReFill() {
+    public void actualHandPlayerRefill() {
         this.getPlayerByTurn().getHand().refillHand();
     }
 
     // map es programacion es una funcion que convierte una cosa en otra
-    private String map(List<List<String>> matrix) {
+    public String map(List<List<String>> matrix) {
         String result = "";
         for (List<String> row : matrix) {
             for (String element : row) {
@@ -200,10 +200,6 @@ public class Game implements Observer {
         return this.getPlayerByTurn().getHand().listCard().get(Integer.parseInt(option) - 1) instanceof Medicine;
     }
 
-    public boolean isVirus(String option) {
-        return this.getPlayerByTurn().getHand().listCard().get(Integer.parseInt(option) - 1) instanceof Virus;
-    }
-
     public boolean isTreatment(String option) {
         return this.getPlayerByTurn().getHand().listCard().get(Integer.parseInt(option) - 1) instanceof Treatment;
     }
@@ -238,7 +234,7 @@ public class Game implements Observer {
                         .getType().equals(TypeOfTreatment.MEDICAL_ERROR);
     }
 
-    private TypeOfOrgan getTypeOfOrgan(String type) {
+    public TypeOfOrgan getTypeOfOrgan(String type) {
         TypeOfOrgan[] list = TypeOfOrgan.values();
         return list[Integer.parseInt(type) - 1];
     }
@@ -272,7 +268,7 @@ public class Game implements Observer {
     public boolean playTransplant(String cardPosition, String organToSwap, String selectedPlayer, String playerOrganToSwap) {
         TypeOfOrgan type = this.getTypeOfOrgan(organToSwap);
         TypeOfOrgan otherPlayerType = this.getTypeOfOrgan(playerOrganToSwap);
-        Player playerToSwap = this.getPlayers().get(this.getPlayerByName(selectedPlayer));
+        Player playerToSwap = this.getPlayers().get(this.getPositionPlayerByName(selectedPlayer));
 
         if (this.getPlayerByTurn().getBody().playTransplantCard(type, playerToSwap, otherPlayerType)) {
             this.discardHandCard(cardPosition);
@@ -283,7 +279,7 @@ public class Game implements Observer {
 
     public boolean playOrganThief(String cardPosition, String selectedPlayer, String playerOrganToSteal) {
         TypeOfOrgan otherPlayerType = this.getTypeOfOrgan(playerOrganToSteal);
-        Player playerToSteal = this.getPlayers().get(this.getPlayerByName(selectedPlayer));
+        Player playerToSteal = this.getPlayers().get(this.getPositionPlayerByName(selectedPlayer));
 
         if (this.getPlayerByTurn().getBody().playOrganThiefCard(playerToSteal, otherPlayerType)) {
             this.discardHandCard(cardPosition);
@@ -295,7 +291,7 @@ public class Game implements Observer {
     public boolean playContagion(String selectedVirus, String playerToInfect, String organToInfect) {
         TypeOfOrgan[] list = TypeOfOrgan.values();
         TypeOfOrgan virusType = list[Integer.parseInt(selectedVirus) - 1];
-        Player player = this.getPlayers().get(this.getPlayerByName(playerToInfect));
+        Player player = this.getPlayers().get(this.getPositionPlayerByName(playerToInfect));
         TypeOfOrgan organType = list[Integer.parseInt(organToInfect) - 1];
 
         return this.getPlayerByTurn().getBody().playContagionCard(virusType, player, organType);
@@ -326,11 +322,11 @@ public class Game implements Observer {
     }
 
     public void playMedicalError(String cardPosition, String playerToSwapBody) {
-        this.getPlayerByTurn().playMedicalErrorCard(this.players.get(this.getPlayerByName(playerToSwapBody)));
+        this.getPlayerByTurn().playMedicalErrorCard(this.players.get(this.getPositionPlayerByName(playerToSwapBody)));
         this.discardHandCard(cardPosition);
     }
 
-    public int getPlayerByName(String name) {
+    public int getPositionPlayerByName(String name) {
         return this.getPlayers().indexOf(new Player(name));
     }
 
