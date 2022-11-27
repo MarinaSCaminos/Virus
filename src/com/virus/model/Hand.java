@@ -1,8 +1,9 @@
 package com.virus.model;
 
-import com.virus.model.card.*;
-import com.virus.model.enums.TypeOfOrgan;
-import com.virus.model.enums.TypeOfTreatment;
+import com.virus.model.card.Card;
+import com.virus.model.card.Medicine;
+import com.virus.model.card.NormalCard;
+import com.virus.model.card.Organ;
 
 import java.util.ArrayList;
 import java.util.List;

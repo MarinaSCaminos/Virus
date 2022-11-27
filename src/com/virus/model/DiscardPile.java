@@ -20,7 +20,7 @@ public class DiscardPile {
         return INSTANCE;
     }
 
-    public Card getCard() {
+    public Card getCard() { // TODO rename
         return stack.pop();
     }
 

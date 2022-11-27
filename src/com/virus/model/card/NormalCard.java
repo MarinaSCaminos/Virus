@@ -11,6 +11,7 @@ public abstract class NormalCard implements Card {
         this.type = type;
     }
 
+    @Override
     public TypeOfOrgan getType() {
         return type;
     }

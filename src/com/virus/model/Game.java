@@ -359,7 +359,6 @@ public class Game implements Observer {
                     break;
                 default:
                     break;
-
             }
         }
     }

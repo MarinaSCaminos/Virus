@@ -10,6 +10,7 @@ public class Treatment implements Card {
         this.type = type;
     }
 
+    @Override
     public TypeOfTreatment getType() {
         return type;
     }

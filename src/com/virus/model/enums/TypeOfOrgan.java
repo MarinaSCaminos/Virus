@@ -14,6 +14,7 @@ public enum TypeOfOrgan implements Type {
         this.spanishName = spanishName;
     }
 
+    @Override
     public String getSpanishName() {
         return this.spanishName;
     }

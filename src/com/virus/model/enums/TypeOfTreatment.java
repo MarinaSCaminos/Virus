@@ -8,14 +8,14 @@ public enum TypeOfTreatment implements Type {
     LATEX_GLOVES("Guantes de latex"),
     MEDICAL_ERROR("Error médico");
 
-
-    private String spanishTreatmentName;
+    private final String spanishTreatmentName;
 
     TypeOfTreatment(String spanishTreatmentName) {
         this.spanishTreatmentName = spanishTreatmentName;
     }
 
-    public String getSpanishName(){
+    @Override
+    public String getSpanishName() {
         return this.spanishTreatmentName;
     }
 

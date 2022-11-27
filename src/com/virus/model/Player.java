@@ -12,16 +12,30 @@ public class Player {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
+    public void playMedicalErrorCard(Player player) {
+        Body thisBody = this.body;
+        this.body = player.getBody();
+        player.setBody(thisBody);
+    }
+
+    public Hand getHand() {
+        return hand;
     }
 
     public void setHand(Hand hand) {
         this.hand = hand;
     }
 
+    public Body getBody() {
+        return body;
+    }
+
     public void setBody(Body body) {
         this.body = body;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -37,17 +51,4 @@ public class Player {
         return Objects.hash(name);
     }
 
-    public Hand getHand() {
-        return hand;
-    }
-
-    public Body getBody() {
-        return body;
-    }
-
-    public void playMedicalErrorCard(Player player) {
-        Body thisBody = this.body;
-        this.body = player.getBody();
-        player.setBody(thisBody);
-    }
 }

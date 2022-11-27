@@ -53,6 +53,12 @@ public class Deck extends Observable {
 
     }
 
+    public static Deck getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Deck();
+        }
+        return INSTANCE;
+    }
 
     // Mezcla el mazo
     public void mixTheCards() {  //Collections.shuffle(mazoDeCartas);
@@ -77,19 +83,12 @@ public class Deck extends Observable {
     /**
      * Precondicion: validar que no este vacio
      */
-    public Card getCard() {
+    public Card getCard() { // TODO rename
         Card card = stack.pop();
         if (stack.empty()) {
             this.notify(Event.EMPTY_DECK);
         }
         return card;
-    }
-
-    public static Deck getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Deck();
-        }
-        return INSTANCE;
     }
 
     @SuppressWarnings("SameParameterValue")
