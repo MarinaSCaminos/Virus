@@ -2,7 +2,7 @@ package com.virus.model.card;
 
 import com.virus.model.enums.TypeOfTreatment;
 
-public class Treatment extends Card {
+public class Treatment implements Card {
 
     private final TypeOfTreatment type;
 
@@ -12,10 +12,5 @@ public class Treatment extends Card {
 
     public TypeOfTreatment getType() {
         return type;
-    }
-
-    @Override
-    public String getIdentifier() {
-        return String.format("%s - %s", Treatment.class.getSimpleName(), type.name());
     }
 }

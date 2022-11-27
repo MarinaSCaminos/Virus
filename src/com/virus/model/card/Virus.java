@@ -8,8 +8,4 @@ public class Virus extends NormalCard {
         super(type);
     }
 
-    @Override // Sobre escribo el metodo de Carta. Me devuelve la clase de carta y el tipo
-    public String getIdentifier() {
-        return String.format("%s - %s", Virus.class.getSimpleName(), super.getType().name());
-    }
 }

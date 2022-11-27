@@ -1,10 +1,9 @@
-package com.virus.controller;
+package com.virus.model;
 
 /* Los metodos estaticos se pueden acceder de manera: "Clase. ...."--> se pueden acceder haicendo una instancia */
 /* ArrayList es una clase, List es una interface */
 /* BUSCAR: pricipio de superposicion de Liskov*/
 
-import com.virus.model.*;
 import com.virus.model.card.*;
 import com.virus.model.enums.Event;
 import com.virus.model.enums.TypeOfOrgan;
@@ -133,7 +132,7 @@ public class Game implements Observer {
     }
 
     public void actualHandPlayerReFill() {
-        this.getPlayerByTurn().getHand().reFillHand();
+        this.getPlayerByTurn().getHand().refillHand();
     }
 
     // map es programacion es una funcion que convierte una cosa en otra

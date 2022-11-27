@@ -65,7 +65,7 @@ public class Hand {
         return false;
     }
 
-    public void reFillHand() {
+    public void refillHand() {
         if (this.card == null) {
             this.card = Deck.getInstance().getCard();
         }
@@ -101,28 +101,23 @@ public class Hand {
         List<String> list = new ArrayList<>();
 
         int numb = 0;
-        for (Card card : cards) {  //TODO crear un diccionario
+        for (Card card : cards) {
             numb++;
-            if (card != null) {      // No va a suceder
-                String type;
-                if (card instanceof NormalCard) {
-                    type = ((NormalCard) card).getType().getSpanishName();
-                    if (card instanceof Organ) {
-                        String state = numb + ". " + "Órgano - " + type;
-                        list.add(state);
-                    } else if (card instanceof Medicine) {
-                        String state = numb + ". " + "Medicina - " + type;
-                        list.add(state);
-                    } else if (card instanceof Virus) {
-                        String state = numb + ". " + "Virus - " + type;
-                        list.add(state);
-                    }
-                } else if (card instanceof Treatment) {
-                    type = ((Treatment) card).getType().getSpanishTreatmentName();
-                    String state = numb + ". " + "Tratamiento - " + type;
-                    list.add(state);
+            String type;
+            String name;
+            type = card.getType().getSpanishName();
+            if (card instanceof NormalCard) {
+                if (card instanceof Organ) {
+                    name = "Órgano";
+                } else if (card instanceof Medicine) {
+                    name = "Medicina";
+                } else {
+                    name = "Virus";
                 }
+            } else {
+                name = "Tratamiento";
             }
+            list.add(String.format(numb + ". " + "%s - " + type, name));
         }
         return list;
     }

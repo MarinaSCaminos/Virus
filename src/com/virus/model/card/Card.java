@@ -1,8 +1,9 @@
 package com.virus.model.card;
 
-public abstract class Card {
+import com.virus.model.enums.Type;
 
-    // Metodo abstracto - no especifico el comportamiento
-    public abstract String getIdentifier();
+public interface Card {
+
+    Type getType();
 
 }

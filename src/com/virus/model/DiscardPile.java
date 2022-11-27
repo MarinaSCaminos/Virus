@@ -24,10 +24,6 @@ public class DiscardPile {
         return stack.pop();
     }
 
-    public Stack<Card> getStack() {
-        return stack;
-    }
-
     public void addCard(Card card) {
         stack.add(card);
     }

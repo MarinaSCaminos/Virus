@@ -8,8 +8,4 @@ public class Organ extends NormalCard {
         super(type);
     }
 
-    @Override
-    public String getIdentifier() {
-        return String.format("%s - %s", Organ.class.getSimpleName(), super.getType().name());
-    }
 }

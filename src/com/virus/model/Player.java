@@ -2,7 +2,7 @@ package com.virus.model;
 
 import java.util.Objects;
 
-public class Player { // TODO agregar el modificador de nombre en jugadores
+public class Player {
 
     private final String name;
     private Hand hand;

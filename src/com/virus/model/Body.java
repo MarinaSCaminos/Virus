@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-// TODO crear Stack multicolor y cambiar funciones respectivamente
 public class Body {
 
     private Stack<NormalCard> heart;
@@ -164,8 +163,6 @@ public class Body {
         return false;
     }
 
-    // TODO Separar en dos funciones
-    // Vefirica si la accion pedida es posible (Agregar una carta en un typo de pila)
     public boolean addCard(NormalCard card, TypeOfOrgan type) {
 
         if (card instanceof Medicine medicineCard) {
@@ -227,7 +224,6 @@ public class Body {
         return false;
     }
 
-    //
     private boolean addMedicine(Medicine card, TypeOfOrgan type) {
         if (type.equals(TypeOfOrgan.HEART)) {
             return addMedicineIfValid(this.savedHeart, TypeOfOrgan.HEART, this.heart, card);
@@ -293,7 +289,7 @@ public class Body {
                     if (type.equals(TypeOfOrgan.BONE)) {
                         this.savedBone = true;
                     }
-                    if (type.equals(TypeOfOrgan.MULTICOLOR)) {  // Agregue satck multicolor
+                    if (type.equals(TypeOfOrgan.MULTICOLOR)) {
                         this.savedMulticolor = true;
                     }
                     return true;

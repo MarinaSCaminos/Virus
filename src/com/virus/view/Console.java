@@ -1,6 +1,6 @@
 package com.virus.view;
 
-import com.virus.controller.Game;
+import com.virus.model.Game;
 
 import java.util.Scanner;
 

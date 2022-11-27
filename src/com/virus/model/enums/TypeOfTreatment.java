@@ -1,6 +1,6 @@
 package com.virus.model.enums;
 
-public enum TypeOfTreatment {
+public enum TypeOfTreatment implements Type {
 
     TRANSPLANT("Trasplante"),
     ORGAN_THIEF("Ladrón de órganos"),
@@ -15,7 +15,7 @@ public enum TypeOfTreatment {
         this.spanishTreatmentName = spanishTreatmentName;
     }
 
-    public String getSpanishTreatmentName(){
+    public String getSpanishName(){
         return this.spanishTreatmentName;
     }
 

@@ -1,9 +1,6 @@
 package com.virus.model.enums;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public enum TypeOfOrgan {
+public enum TypeOfOrgan implements Type {
 
     HEART("Corazón"),
     STOMACH("Estómago"),
@@ -11,7 +8,7 @@ public enum TypeOfOrgan {
     BONE("Hueso"),
     MULTICOLOR("Multicolor");
 
-    private String spanishName;
+    private final String spanishName;
 
     TypeOfOrgan(String spanishName) {
         this.spanishName = spanishName;
