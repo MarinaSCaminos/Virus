@@ -4,7 +4,7 @@ import com.virus.controller.Controller;
 
 import java.util.Scanner;
 
-public class Console { //TODO singleton console
+public class Console {
 
     private static Console INSTANCE;
     private final Controller controller;
@@ -238,7 +238,7 @@ public class Console { //TODO singleton console
                             }
 
                         } else { // No eligio una carta de la mano, dato mal ingresado
-                            System.out.println("El dato ingresado no es una opcion valida."); // TODO crear un while
+                            System.out.println("El dato ingresado no es una opcion valida.");
                         }
                     } else {
                         System.out.println("No puedes jugar mas de una carta a la vez.");
@@ -253,7 +253,7 @@ public class Console { //TODO singleton console
                         executedAnOption = true;
                         System.out.println(controller.mapCard());
                     } else {
-                        System.out.println("El dato ingresado no es una opcion valida.");  // TODO crear un while
+                        System.out.println("El dato ingresado no es una opcion valida.");
                     }
 
                 } else if (option.equals("3")) {    // FINALIZAR TURNO
@@ -299,7 +299,7 @@ public class Console { //TODO singleton console
         String name;
         do {
             name = scanner.nextLine();
-            if (!name.isBlank() && controller.existPlayer(name)) {   //TODO agregar condicion de nombres distintos
+            if (!name.isBlank() && controller.existPlayer(name)) {
                 break;
             }
             System.out.print("Por favor, ingrese un nombre valido para eliminar: ");

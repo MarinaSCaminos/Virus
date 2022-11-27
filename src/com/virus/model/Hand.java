@@ -27,8 +27,6 @@ public class Hand {
         this.card3 = null;
     }
 
-    // TODO separar funcion descartar en Game
-
     public boolean operateHand(Card card) {
         return this.operateHand(card, false, null);
     }

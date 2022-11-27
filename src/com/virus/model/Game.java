@@ -123,10 +123,6 @@ public class Game implements Observer {
         return this.winner.getName();
     }
 
-
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*
-
     public boolean actualHandPlayerIsEmpty() {
         return this.getPlayerByTurn().getHand().isHandEmpty();
     }
@@ -137,14 +133,14 @@ public class Game implements Observer {
 
     // map es programacion es una funcion que convierte una cosa en otra
     public String map(List<List<String>> matrix) {
-        String result = "";
+        StringBuilder stringBuilder = new StringBuilder();
         for (List<String> row : matrix) {
             for (String element : row) {
-                result += element;
+                stringBuilder.append(element);
             }
-            result = result + "\n";
+            stringBuilder.append("\n");
         }
-        return result;
+        return stringBuilder.toString();
     }
 
     public String mapPlayerInTurn() {
@@ -154,24 +150,26 @@ public class Game implements Observer {
 
     public String otherPlayersBody(String title) {
         Player actual = this.getPlayerByTurn();
-        String bodyPlayers = "";
+        StringBuilder bodyPlayers = new StringBuilder();
         for (Player player : this.getPlayers()) {
             if (!player.equals(actual)) {
-                bodyPlayers = bodyPlayers + String.format(title, player.getName()) + "\n"
-                        + this.map(player.getBody().getStateMatrix()) + "\n";
+                bodyPlayers.append(String.format(title, player.getName()));
+                bodyPlayers.append("\n");
+                bodyPlayers.append(this.map(player.getBody().getStateMatrix()));
+                bodyPlayers.append("\n");
             }
-
         }
-        return bodyPlayers;
+        return bodyPlayers.toString();
     }
 
     public String mapCard() {
         List<String> list = this.getPlayerByTurn().getHand().getState();
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (String card : list) {
-            result += card + "\n";
+            result.append(card);
+            result.append("\n");
         }
-        return result;
+        return result.toString();
     }
 
     public int getNumberOfCards() {
@@ -181,11 +179,13 @@ public class Game implements Observer {
     // Recibe una lista de Typos haciendo referencia a cual pila del cuerpo se puede jugar la carta seleccionada
     public String mapOptions(String title) {
         TypeOfOrgan[] list = TypeOfOrgan.values();
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < list.length; i++) {
-            result += i + 1 + String.format(title, list[i].getSpanishName()) + "\n";
+            result.append(i+1);
+            result.append(String.format(title, list[i].getSpanishName()));
+            result.append("\n");
         }
-        return result;
+        return result.toString();
     }
 
     public boolean isNormalCard(String option) {
@@ -249,7 +249,7 @@ public class Game implements Observer {
         TypeOfOrgan type = this.getTypeOfOrgan(typeOfOrgan);
         Player player = this.getPlayerByTurn();
         Medicine medicine = (Medicine) player.getHand().listCard().get(Integer.parseInt(cardPosition) - 1);
-        return (player.getBody().addCard(medicine, type)) && (player.getHand().operateHand(medicine));
+        return (player.getBody().addMedicineCard(medicine, type, this.discardPile)) && (player.getHand().operateHand(medicine));
     }
 
     public boolean addVirusToBody(String cardPosition, String typeOfOrgan, int player) {
@@ -257,7 +257,7 @@ public class Game implements Observer {
         Player playerTurn = this.getPlayerByTurn();
         Player playerToAttack = this.getPlayers().get(player);
         Virus virus = (Virus) playerTurn.getHand().listCard().get(Integer.parseInt(cardPosition) - 1);
-        return playerToAttack.getBody().addCard(virus, type) && playerTurn.getHand().operateHand(virus);
+        return playerToAttack.getBody().addVirusCard(virus, type, this.discardPile) && playerTurn.getHand().operateHand(virus);
     }
 
     public void discardHandCard(String cardPosition) {
@@ -294,7 +294,7 @@ public class Game implements Observer {
         Player player = this.getPlayers().get(this.getPositionPlayerByName(playerToInfect));
         TypeOfOrgan organType = list[Integer.parseInt(organToInfect) - 1];
 
-        return this.getPlayerByTurn().getBody().playContagionCard(virusType, player, organType);
+        return this.getPlayerByTurn().getBody().playContagionCard(virusType, player, organType, this.discardPile);
     }
 
     public boolean canInfect() {

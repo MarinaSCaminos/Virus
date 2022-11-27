@@ -163,157 +163,128 @@ public class Body {
         return false;
     }
 
-    public boolean addCard(NormalCard card, TypeOfOrgan type) {
 
-        if (card instanceof Medicine medicineCard) {
-            // Si el tipo de stack es multicolor o es igual al tipo de carta
-            if (type.equals(TypeOfOrgan.MULTICOLOR) || type.equals(card.getType()) || card.getType().equals(TypeOfOrgan.MULTICOLOR)) {
-                return addMedicine(medicineCard, type);
-            } else {
-                // Si el tipo de stack no es muticolor o del mismo tipo de la carta, entonces me fijo que se encuntra en el tope
-                if (type.equals(TypeOfOrgan.HEART) && !this.heart.empty() && !this.savedHeart) {
-                    if ((this.heart.peek() instanceof Virus) && (this.heart.peek().getType().equals(TypeOfOrgan.MULTICOLOR))) {
-                        return addMedicine(medicineCard, type);
-                    }
-                }
-                if (type.equals(TypeOfOrgan.STOMACH) && !this.stomach.empty() && !this.savedStomach) {
-                    if ((this.stomach.peek() instanceof Virus) && (this.stomach.peek().getType().equals(TypeOfOrgan.MULTICOLOR))) {
-                        return addMedicine(medicineCard, type);
-                    }
-                }
-                if (type.equals(TypeOfOrgan.BRAIN) && !this.brain.empty() && !this.savedBrain) {
-                    if ((this.brain.peek() instanceof Virus) && (this.brain.peek().getType().equals(TypeOfOrgan.MULTICOLOR))) {
-                        return addMedicine(medicineCard, type);
-                    }
-                }
-                if (type.equals(TypeOfOrgan.BONE) && !this.bone.empty() && !this.savedBone) {
-                    if ((this.bone.peek() instanceof Virus) && (this.bone.peek().getType().equals(TypeOfOrgan.MULTICOLOR))) {
-                        return addMedicine(medicineCard, type);
-                    }
-                }
+
+    public boolean addMedicineCard(NormalCard card, TypeOfOrgan type, DiscardPile discardPile)  {
+        if (card instanceof Medicine medicineCard)   {
+
+            if (type.equals(TypeOfOrgan.HEART) && !this.heart.empty() && !this.savedHeart
+                    && (card.getType().equals(TypeOfOrgan.HEART) || card.getType().equals(TypeOfOrgan.MULTICOLOR) ||
+                    this.isVirusMulticolor(this.heart))) {
+                return addMedicineIfValid(TypeOfOrgan.HEART, this.heart, medicineCard, discardPile);
+            }
+
+            if ((type.equals(TypeOfOrgan.STOMACH) && !this.stomach.empty() && !this.savedStomach) && ((card.getType().equals(TypeOfOrgan.STOMACH)) || (card.getType().equals(TypeOfOrgan.MULTICOLOR)) ||
+                    this.isVirusMulticolor(this.stomach))) {
+                return addMedicineIfValid(TypeOfOrgan.STOMACH, this.stomach, medicineCard, discardPile);
+            }
+
+            if ((type.equals(TypeOfOrgan.BRAIN) && !this.brain.empty() && !this.savedBrain) && ((card.getType().equals(TypeOfOrgan.BRAIN)) || (card.getType().equals(TypeOfOrgan.MULTICOLOR)) ||
+                    this.isVirusMulticolor(this.brain))) {
+                return addMedicineIfValid(TypeOfOrgan.BRAIN, this.brain, medicineCard, discardPile);
+            }
+
+            if ((type.equals(TypeOfOrgan.BONE) && !this.bone.empty() && !this.savedBone) && ((card.getType().equals(TypeOfOrgan.BONE)) || (card.getType().equals(TypeOfOrgan.MULTICOLOR)) ||
+                    this.isVirusMulticolor(this.bone))) {
+                return addMedicineIfValid(TypeOfOrgan.BONE, this.bone, medicineCard, discardPile);
+            }
+            if (type.equals(TypeOfOrgan.MULTICOLOR) && !this.multicolor.empty() && !this.savedMulticolor) {
+                return addMedicineIfValid(TypeOfOrgan.MULTICOLOR, this.multicolor, medicineCard, discardPile);
             }
         }
+        return false;
+    }
+
+    public boolean addVirusCard(NormalCard card, TypeOfOrgan type, DiscardPile discardPile) {
 
         if (card instanceof Virus virusCard) {
-            if (type.equals(TypeOfOrgan.MULTICOLOR) || type.equals(card.getType()) || card.getType().equals(TypeOfOrgan.MULTICOLOR)) {
-                return addVirus(virusCard, type);
-            } else {
-                // Si el tipo de stack no es muticolor o del mismo tipo de la carta, entonces me fijo que se encuntra en el tope
-                if (type.equals(TypeOfOrgan.HEART) && !this.heart.empty() && !this.savedHeart) {
-                    if ((this.heart.peek() instanceof Virus) && (this.heart.peek().getType().equals(TypeOfOrgan.MULTICOLOR))) {
-                        return addVirus(virusCard, type);
-                    }
-                }
-                if (type.equals(TypeOfOrgan.STOMACH) && !this.stomach.empty() && !this.savedStomach) {
-                    if ((this.stomach.peek() instanceof Virus) && (this.stomach.peek().getType().equals(TypeOfOrgan.MULTICOLOR))) {
-                        return addVirus(virusCard, type);
-                    }
-                }
-                if (type.equals(TypeOfOrgan.BRAIN) && !this.brain.empty() && !this.savedBrain) {
-                    if ((this.brain.peek() instanceof Virus) && (this.brain.peek().getType().equals(TypeOfOrgan.MULTICOLOR))) {
-                        return addVirus(virusCard, type);
-                    }
-                }
-                if (type.equals(TypeOfOrgan.BONE) && !this.bone.empty() && !this.savedBone) {
-                    if ((this.bone.peek() instanceof Virus) && (this.bone.peek().getType().equals(TypeOfOrgan.MULTICOLOR))) {
-                        return addVirus(virusCard, type);
-                    }
-                }
+            if (type.equals(TypeOfOrgan.HEART) && !this.heart.empty() && !this.savedHeart &&
+                    (card.getType().equals(TypeOfOrgan.HEART) || card.getType().equals(TypeOfOrgan.MULTICOLOR) ||
+                            this.isMedicineMulticolor(this.heart))) {
+                return this.addVirusIfValid(this.heart, virusCard, discardPile);
+            }
+
+            if (type.equals(TypeOfOrgan.STOMACH) && !this.stomach.empty() && !this.savedStomach &&
+                    (card.getType().equals(TypeOfOrgan.STOMACH) ||
+                            card.getType().equals(TypeOfOrgan.MULTICOLOR) || this.isMedicineMulticolor(this.stomach))) {
+                return this.addVirusIfValid(this.stomach, virusCard, discardPile);
+            }
+
+            if (type.equals(TypeOfOrgan.BRAIN) && !this.brain.empty() && !this.savedBrain &&
+                    (card.getType().equals(TypeOfOrgan.BRAIN) || card.getType().equals(TypeOfOrgan.MULTICOLOR) ||
+                            this.isVirusMulticolor(this.brain))) {
+                return this.addVirusIfValid(this.brain, virusCard, discardPile);
+            }
+
+            if (type.equals(TypeOfOrgan.BONE) && !this.bone.empty() && !this.savedBone &&
+                    (card.getType().equals(TypeOfOrgan.BONE) || card.getType().equals(TypeOfOrgan.MULTICOLOR) ||
+                            this.isVirusMulticolor(this.bone))) {
+                return this.addVirusIfValid(this.bone, virusCard, discardPile);
+            }
+            if (type.equals(TypeOfOrgan.MULTICOLOR) && !this.multicolor.empty() && !this.savedMulticolor) {
+                return this.addVirusIfValid(this.multicolor, virusCard, discardPile);
             }
         }
         return false;
     }
 
-    private boolean addMedicine(Medicine card, TypeOfOrgan type) {
-        if (type.equals(TypeOfOrgan.HEART)) {
-            return addMedicineIfValid(this.savedHeart, TypeOfOrgan.HEART, this.heart, card);
-        }
-        if (type.equals(TypeOfOrgan.STOMACH)) {
-            return addMedicineIfValid(this.savedStomach, TypeOfOrgan.STOMACH, this.stomach, card);
-        }
-        if (type.equals(TypeOfOrgan.BRAIN)) {
-            return addMedicineIfValid(this.savedBrain, TypeOfOrgan.BRAIN, this.brain, card);
-        }
-        if (type.equals(TypeOfOrgan.BONE)) {
-            return addMedicineIfValid(this.savedBone, TypeOfOrgan.BONE, this.bone, card);
-        }
-        if (type.equals(TypeOfOrgan.MULTICOLOR)) {
-            return addMedicineIfValid(this.savedMulticolor, TypeOfOrgan.MULTICOLOR, this.multicolor, card);
-        }
-        return false;
+    private boolean isVirusMulticolor(Stack<NormalCard> stack) {
+        return (stack.peek() instanceof Virus) && (stack.peek().getType().equals(TypeOfOrgan.MULTICOLOR));
     }
 
-    // Se fija a que typo pertenece
-    private boolean addVirus(Virus card, TypeOfOrgan type) {
-        if (type.equals(TypeOfOrgan.HEART)) {
-            return this.addVirusIfValid(this.savedHeart, this.heart, card);
-        }
-        if (type.equals(TypeOfOrgan.STOMACH)) {
-            return this.addVirusIfValid(this.savedStomach, this.stomach, card);
-        }
-        if (type.equals(TypeOfOrgan.BRAIN)) {
-            return this.addVirusIfValid(this.savedBrain, this.brain, card);
-        }
-        if (type.equals(TypeOfOrgan.BONE)) {
-            return this.addVirusIfValid(this.savedBone, this.bone, card);
-        }
-        if (type.equals(TypeOfOrgan.MULTICOLOR)) {
-            return this.addVirusIfValid(this.savedMulticolor, this.multicolor, card);
-        }
-        return false;
+    private boolean isMedicineMulticolor(Stack<NormalCard> stack) {
+        return (stack.peek() instanceof Medicine) && (stack.peek().getType().equals(TypeOfOrgan.MULTICOLOR));
     }
+
 
     // Agrega la carta Medicina en la Pila correspondiente
-    private boolean addMedicineIfValid(boolean saved, TypeOfOrgan type, Stack<NormalCard> stack, Medicine card) {
-        if (!saved) {
-            if (!stack.empty()) {
-                if (stack.peek() instanceof Organ) {
-                    stack.add(card);
-                    return true;
-                }
-                if (stack.peek() instanceof Virus) {
-                    stack.pop();
-                    return true;
-                }
-                if (stack.peek() instanceof Medicine) {
-                    stack.add(card);
-                    if (type.equals(TypeOfOrgan.HEART)) {
-                        this.savedHeart = true;
-                    }
-                    if (type.equals(TypeOfOrgan.STOMACH)) {
-                        this.savedStomach = true;
-                    }
-                    if (type.equals(TypeOfOrgan.BRAIN)) {
-                        this.savedBrain = true;
-                    }
-                    if (type.equals(TypeOfOrgan.BONE)) {
-                        this.savedBone = true;
-                    }
-                    if (type.equals(TypeOfOrgan.MULTICOLOR)) {
-                        this.savedMulticolor = true;
-                    }
-                    return true;
-                }
+    private boolean addMedicineIfValid(TypeOfOrgan type, Stack<NormalCard> stack, Medicine card, DiscardPile discardPile) {
+        if (stack.peek() instanceof Organ) {
+            stack.add(card);
+            return true;
+        }
+        if (stack.peek() instanceof Virus) {
+            discardPile.addCard(stack.pop());
+            return true;
+        }
+        if (stack.peek() instanceof Medicine) {
+            stack.add(card);
+            if (type.equals(TypeOfOrgan.HEART)) {
+                this.savedHeart = true;
             }
+            if (type.equals(TypeOfOrgan.STOMACH)) {
+                this.savedStomach = true;
+            }
+            if (type.equals(TypeOfOrgan.BRAIN)) {
+                this.savedBrain = true;
+            }
+            if (type.equals(TypeOfOrgan.BONE)) {
+                this.savedBone = true;
+            }
+            if (type.equals(TypeOfOrgan.MULTICOLOR)) {
+                this.savedMulticolor = true;
+            }
+            return true;
         }
         return false;
     }
 
     // Agrega la carta Virus en la pila correspondiente
-    private boolean addVirusIfValid(boolean saved, Stack<NormalCard> stack, Virus card) {
-        if (!saved) {
-            if (!stack.empty()) {
-                if (stack.peek() instanceof Organ) {
-                    stack.add(card);
-                    return true;
-                } else if (stack.peek() instanceof Virus) {
-                    // TODO Observer -- mandar a discardPile la pila
-                    stack.clear();
-                    return true;
-                } else if (stack.peek() instanceof Medicine) {
-                    stack.pop();
-                    return true;
+    private boolean addVirusIfValid(Stack<NormalCard> stack, Virus card, DiscardPile discardPile) {
+        if (!stack.empty()) {
+            if (stack.peek() instanceof Organ) {
+                stack.add(card);
+                return true;
+            } else if (stack.peek() instanceof Virus) {
+                while(!stack.empty()) {
+                    discardPile.addCard(stack.pop());
                 }
+                discardPile.addCard(card);
+                return true;
+            } else if (stack.peek() instanceof Medicine) {
+                discardPile.addCard(stack.pop());
+                discardPile.addCard(card);
+                return true;
             }
         }
         return false;
@@ -343,7 +314,6 @@ public class Body {
         return !this.getStackByType(type).empty() && this.isNotSaved(type);
     }
 
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private boolean hasAVirus(TypeOfOrgan type) {
         return this.isNotEmptyOrSaved(type) && (this.getStackByType(type).peek() instanceof Virus);
     }
@@ -360,9 +330,9 @@ public class Body {
         return false;
     }
 
-    public boolean playContagionCard(TypeOfOrgan virusInBody, Player playerToInfect, TypeOfOrgan organToInfect) {
+    public boolean playContagionCard(TypeOfOrgan virusInBody, Player playerToInfect, TypeOfOrgan organToInfect, DiscardPile discardPile) {
         if (this.canPlayContagion(virusInBody, playerToInfect, organToInfect)) {
-            return playerToInfect.getBody().addCard(this.getStackByType(virusInBody).pop(), organToInfect);
+            return playerToInfect.getBody().addVirusCard(this.getStackByType(virusInBody).pop(), organToInfect, discardPile);
         }
         return false;
     }
@@ -378,7 +348,6 @@ public class Body {
         return this.canPlayContagion(virusInOrgan, playerToInfect, virusInOrgan) ||
                 this.canPlayContagion(virusInOrgan, playerToInfect, TypeOfOrgan.MULTICOLOR);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     public boolean playOrganThiefCard(Player player, TypeOfOrgan otherPlayerType) {
         if (player.getBody().isNotSaved(otherPlayerType) && !player.getBody().getStackByType(otherPlayerType).empty()) {
@@ -461,7 +430,6 @@ public class Body {
         }
     }
 
-    // TODO optimizar usando char o enum
     private List<List<String>> initializeMatrix() {
         List<List<String>> matrix = new ArrayList<>();
         final String SPACE = "\t\t\t\t";
