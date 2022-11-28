@@ -176,7 +176,7 @@ public class Game implements Observer {
         return this.getPlayerByTurn().getHand().getState().size();
     }
 
-    // Recibe una lista de Typos haciendo referencia a cual pila del cuerpo se puede jugar la carta seleccionada
+    // Recibe una lista de Typos haciendo referencia a cada organo del cuerpo
     public String mapOptions(String title) {
         TypeOfOrgan[] list = TypeOfOrgan.values();
         StringBuilder result = new StringBuilder();
