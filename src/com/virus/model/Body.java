@@ -310,7 +310,7 @@ public class Body {
         return false;
     }
 
-    public boolean isNotEmptyOrSaved(TypeOfOrgan type) {
+    private boolean isNotEmptyOrSaved(TypeOfOrgan type) {
         return !this.getStackByType(type).empty() && this.isNotSaved(type);
     }
 
@@ -391,18 +391,15 @@ public class Body {
 
     private String fixTabular(String organ) {
         if (organ.length() < 4) {
-            return organ + "\t\t\t\t\t";
-        }
-        if (organ.length() < 8) {
             return organ + "\t\t\t\t";
         }
-        if (organ.length() < 12) {
+        if (organ.length() < 8) {
             return organ + "\t\t\t";
         }
-        if (organ.length() < 16) {
+        if (organ.length() < 12) {
             return organ + "\t\t";
         }
-        if (organ.length() < 20) {
+        if (organ.length() < 16) {
             return organ + "\t";
         }
         return organ;
@@ -410,23 +407,23 @@ public class Body {
 
     private String cardName(NormalCard card) {
         if (card instanceof Virus) {
-            return "V-" + getCardType(card);  //Character.toString(0x1F9A0)
+            return getCardType("V-", card);  //Character.toString(0x1F9A0)
         } else {
-            return "M-" + getCardType(card); //Character.toString(0x1F48A)
+            return getCardType("M-", card); //Character.toString(0x1F48A)
         }
     }
 
-    private String getCardType(NormalCard card) {
+    private String getCardType(String extra, NormalCard card) {
         if (card.getType().equals(TypeOfOrgan.HEART)) {
-            return fixTabular("Corazón");
+            return fixTabular(extra + "Corazón");
         } else if (card.getType().equals(TypeOfOrgan.STOMACH)) {
-            return fixTabular("Estomago");
+            return fixTabular(extra + "Estomago");
         } else if (card.getType().equals(TypeOfOrgan.BRAIN)) {
-            return fixTabular("Cerebro");
+            return fixTabular(extra + "Cerebro");
         } else if (card.getType().equals(TypeOfOrgan.BONE)) {
-            return fixTabular("Hueso");
+            return fixTabular(extra + "Hueso");
         } else {
-            return fixTabular("Multicolor");
+            return fixTabular(extra + "Multicolor");
         }
     }
 

@@ -132,7 +132,7 @@ public class Game implements Observer {
     }
 
     // map es programacion es una funcion que convierte una cosa en otra
-    public String map(List<List<String>> matrix) {
+    private String map(List<List<String>> matrix) {
         StringBuilder stringBuilder = new StringBuilder();
         for (List<String> row : matrix) {
             for (String element : row) {
@@ -200,7 +200,7 @@ public class Game implements Observer {
         return this.getPlayerByTurn().getHand().listCard().get(Integer.parseInt(option) - 1) instanceof Medicine;
     }
 
-    public boolean isTreatment(String option) {
+    private boolean isTreatment(String option) {
         return this.getPlayerByTurn().getHand().listCard().get(Integer.parseInt(option) - 1) instanceof Treatment;
     }
 
@@ -234,7 +234,7 @@ public class Game implements Observer {
                         .getType().equals(TypeOfTreatment.MEDICAL_ERROR);
     }
 
-    public TypeOfOrgan getTypeOfOrgan(String type) {
+    private TypeOfOrgan getTypeOfOrgan(String type) {
         TypeOfOrgan[] list = TypeOfOrgan.values();
         return list[Integer.parseInt(type) - 1];
     }
@@ -349,7 +349,7 @@ public class Game implements Observer {
             switch ((Event) arg) {
                 case EMPTY_DECK:
                     while (!this.discardPile.empty()) {
-                        this.deck.addCard(this.discardPile.getCard());
+                        this.deck.addCard(this.discardPile.getDiscardPileCard());
                     }
                     this.deck.mixTheCards();
                     break;

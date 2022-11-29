@@ -31,8 +31,8 @@ public class Hand {
         return this.operateHand(card, false, null);
     }
 
-    public boolean operateHand(Card card, DiscardPile discardPile) {
-        return this.operateHand(card, true, discardPile);
+    public void operateHand(Card card, DiscardPile discardPile) {
+        this.operateHand(card, true, discardPile);
     }
 
     /**

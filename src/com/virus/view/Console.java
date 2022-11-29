@@ -98,7 +98,6 @@ public class Console {
                 System.out.println("1. Jugar una carta. \n2. Descartar una carta. \n3. Terminar turno");
                 option = scanner.nextLine();
 
-                // TODO hacer un while por cada ingreso de dato, y verfique que el nombre del jugador ingreaso no sea el del turno
                 // TODO No mostrar la opcion de jugar en caso de que no se pueda ¿?
                 if (option.equals("1")) {
                     if (!playedOnce) {
@@ -280,7 +279,7 @@ public class Console {
         return controller.deletePlayer(name);
     }
 
-    public void preparedNextTurn() {
+    private void preparedNextTurn() {
         controller.actualHandPlayerRefill();
 
         System.out.print("Presione Enter para continuar con el siguiente jugador.");
